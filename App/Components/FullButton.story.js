@@ -1,7 +1,7 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react-native'
+import React from 'react';
+import { storiesOf } from '@storybook/react-native';
 
-import FullButton from './FullButton'
+import FullButton from './FullButton';
 
 storiesOf('FullButton')
   .add('Default', () => (
@@ -14,4 +14,4 @@ storiesOf('FullButton')
       text='Style Me Up!'
       styles={{ backgroundColor: 'blue' }}
     />
-  ))
+  ));

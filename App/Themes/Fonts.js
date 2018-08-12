@@ -2,7 +2,7 @@ const type = {
   base: 'Avenir-Book',
   bold: 'Avenir-Black',
   emphasis: 'HelveticaNeue-Italic'
-}
+};
 
 const size = {
   h1: 38,
@@ -16,7 +16,7 @@ const size = {
   medium: 14,
   small: 12,
   tiny: 8.5
-}
+};
 
 const style = {
   h1: {
@@ -50,11 +50,18 @@ const style = {
   description: {
     fontFamily: type.base,
     fontSize: size.medium
+  },
+  main: {
+    fontFamily: 'Roboto',
+    fontSize: 16
+  },
+  megrim: {
+    fontFamily: 'telefono'
   }
-}
+};
 
 export default {
   type,
   size,
   style
-}
+};
