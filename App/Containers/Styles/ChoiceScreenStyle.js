@@ -18,7 +18,7 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   text: {
-    ...Fonts.style.megrim,
+    fontFamily: 'Roboto',
     fontSize: 80,
     color: 'white',
     textAlign: 'center'

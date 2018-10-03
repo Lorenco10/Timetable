@@ -36,7 +36,7 @@ export default class TopTabScreen extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
         <StatusBar trasparent />
-        {/* <TabScreen style={{ flex: 1 }} orari={this.orderedCards()} /> */}
+        <TabScreen style={{ flex: 1 }} orari={this.orderedCards()} />
         <TabScreen
           style={{ flex: 1 }}
           orari={this.state.orari}

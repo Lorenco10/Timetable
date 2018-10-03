@@ -8,15 +8,18 @@ import {
   //FlatList,
   ScrollView,
   /*NativeModules*/
-  Animated
+  Animated,
+  TextInput,
+  Keyboard,
+  Easing
 } from 'react-native';
 //import axios from 'axios';
 //import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-//import Spinner from 'react-native-spinkit';
+import Spinner from 'react-native-spinkit';
 //import { parseString } from 'react-native-xml2js';
-import { Images } from '../Themes';
+import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/LaunchScreenStyles';
@@ -31,6 +34,8 @@ class LaunchScreen extends Component {
       orari: props.navigation.getParam('orari'),
       modalVisible: false,
       activePicker: '',
+      text: '',
+      loadContent: false,
       pedagogu: 'PEDAGOGU',
       dega: 'DEGA',
       viti: 'VITI',
@@ -38,20 +43,43 @@ class LaunchScreen extends Component {
     };
 
     this.modalAnim = new Animated.Value(0.01);
+    this.searchAnim = new Animated.Value(0);
 
     this.renderItem = this.renderItem.bind(this);
     this.keyExtractor = this.keyExtractor.bind(this);
     this.show = this.show.bind(this);
     this.animate = this.animate.bind(this);
+    this.animateS = this.animateS.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  animate(open) {
+  onChange(value) {
+    this.textInput.setNativeProps({ text: value });
+    this.setState({ text: value });
+  }
+
+  animate(open, load) {
     Animated.spring(this.modalAnim, {
       toValue: open ? 1 : 0,
       useNativeDriver: true,
       velocity: 15,
       tension: 20,
       friction: 50
+    }).start(
+      load
+        ? () => {
+            this.setState({ loadContent: !this.state.loadContent });
+          }
+        : null
+    );
+  }
+
+  animateS(open) {
+    Animated.timing(this.searchAnim, {
+      toValue: open ? 1 : 0,
+      duration: 20,
+      easing: Easing.out(Easing.back(0.01)),
+      useNativeDriver: true
     }).start();
   }
 
@@ -67,7 +95,7 @@ class LaunchScreen extends Component {
                   setTimeout(() => {
                     this.setState({ modalVisible: !this.state.modalVisible, viti: prop.text });
                   }, 100);
-                  this.animate(!this.state.modalVisible);
+                  this.animate(!this.state.modalVisible, true);
                 }}
                 style={styles.vitiParaleliContainer}
                 key={prop.id}
@@ -109,7 +137,7 @@ class LaunchScreen extends Component {
                       paraleli: prop.text
                     });
                   }, 100);
-                  this.animate(!this.state.modalVisible);
+                  this.animate(!this.state.modalVisible, true);
                 }}
                 style={styles.vitiParaleliContainer}
                 key={prop.id}
@@ -129,28 +157,96 @@ class LaunchScreen extends Component {
             flex: 1
           }}
         >
-          {/* <ScrollView
-            style={{
-              flex: 1
-            }}
-          >
-            {this.state.deget.map(prop => {
-              return (
+          {this.state.deget.map(prop => {
+            if (this.state.text !== '') {
+              return prop.dega[0].toUpperCase().includes(this.state.text.toUpperCase()) ? (
                 <TouchableOpacity
                   onPress={() => {
                     setTimeout(() => {
-                      this.setState({ modalVisible: !this.state.modalVisible, dega: prop.dega[0] });
+                      this.setState({
+                        modalVisible: !this.state.modalVisible,
+                        text: '',
+                        dega: prop.dega[0]
+                      });
                     }, 100);
-                    this.animate(!this.state.modalVisible);
+                    this.animate(!this.state.modalVisible, true);
                   }}
                   style={{ flex: 1 }}
                   key={prop.dega}
                 >
                   <Text style={styles.degetText}>{prop.dega}</Text>
                 </TouchableOpacity>
-              );
-            })}
-          </ScrollView> */}
+              ) : null;
+            }
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setTimeout(() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      dega: prop.dega[0],
+                      text: ''
+                    });
+                  }, 100);
+                  this.animate(!this.state.modalVisible, true);
+                }}
+                style={{ flex: 1 }}
+                key={prop.dega}
+              >
+                <Text style={styles.degetText}>{prop.dega}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      );
+    }
+    if (picker === 'pedagogu') {
+      return (
+        <ScrollView
+          style={{
+            flex: 1
+          }}
+        >
+          {this.state.pedagoget.map(prop => {
+            if (this.state.text !== '') {
+              return prop.pedagog[0].toUpperCase().substring(0, this.state.text.length) ===
+                this.state.text.toUpperCase() ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setTimeout(() => {
+                      this.setState({
+                        modalVisible: !this.state.modalVisible,
+                        text: '',
+                        pedagogu: prop.pedagog[0].toUpperCase()
+                      });
+                    }, 100);
+                    this.animate(!this.state.modalVisible, true);
+                  }}
+                  style={{ flex: 1 }}
+                  key={prop.dega}
+                >
+                  <Text style={styles.degetText}>{prop.pedagog[0].toUpperCase()}</Text>
+                </TouchableOpacity>
+              ) : null;
+            }
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  setTimeout(() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      pedagogu: prop.pedagog[0].toUpperCase()
+                    });
+                  }, 100);
+                  this.animate(!this.state.modalVisible, true);
+                }}
+                style={{ flex: 1 }}
+                key={prop.dega}
+              >
+                <Text style={styles.degetText}>{prop.pedagog[0].toUpperCase()}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       );
     }
@@ -199,6 +295,11 @@ class LaunchScreen extends Component {
       outputRange: [0, 1],
       extrapolate: 'clamp'
     });
+    const translateY = this.searchAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, -Metrics.screenHeight * 0.38],
+      extrapolate: 'clamp'
+    });
 
     const { navigation } = this.props;
 
@@ -217,7 +318,7 @@ class LaunchScreen extends Component {
                     modalVisible: !this.state.modalVisible,
                     activePicker: 'dega'
                   });
-                  this.animate(!this.state.modalVisible);
+                  this.animate(!this.state.modalVisible, true);
                 }}
               >
                 <Text style={styles.pickerText}>{this.state.dega}</Text>
@@ -226,8 +327,12 @@ class LaunchScreen extends Component {
               <TouchableOpacity
                 style={styles.picker}
                 onPress={() => {
-                  this.setState({ modalVisible: !this.state.modalVisible, activePicker: 'viti' });
-                  this.animate(!this.state.modalVisible);
+                  this.setState({
+                    modalVisible: !this.state.modalVisible,
+                    activePicker: 'viti',
+                    loadContent: true
+                  });
+                  this.animate(!this.state.modalVisible, false);
                 }}
               >
                 <Text style={styles.pickerText}>{this.state.viti}</Text>
@@ -238,9 +343,10 @@ class LaunchScreen extends Component {
                 onPress={() => {
                   this.setState({
                     modalVisible: !this.state.modalVisible,
-                    activePicker: 'paraleli'
+                    activePicker: 'paraleli',
+                    loadContent: true
                   });
-                  this.animate(!this.state.modalVisible);
+                  this.animate(!this.state.modalVisible, false);
                 }}
               >
                 <Text style={styles.pickerText}>{this.state.paraleli}</Text>
@@ -256,7 +362,7 @@ class LaunchScreen extends Component {
                     modalVisible: !this.state.modalVisible,
                     activePicker: 'pedagogu'
                   });
-                  this.animate(!this.state.modalVisible);
+                  this.animate(!this.state.modalVisible, true);
                 }}
               >
                 <Text style={styles.pickerText}>{this.state.pedagogu}</Text>
@@ -271,6 +377,7 @@ class LaunchScreen extends Component {
             navigation.navigate('MainScreen', {
               orari: this.state.orari,
               dega: this.state.dega,
+              pedagogu: this.state.pedagogu,
               viti: this.state.viti,
               paraleli: this.state.paraleli
             });
@@ -297,17 +404,54 @@ class LaunchScreen extends Component {
               style={[styles.backgroundTheme, { backgroundColor: 'black', opacity: 0.5 }]}
               onPress={() => {
                 setTimeout(() => {
-                  this.setState({ modalVisible: !this.state.modalVisible });
+                  this.setState({ modalVisible: !this.state.modalVisible, text: '' });
                 }, 100);
-                this.animate();
+                this.animate(this.state.modalVisible, true);
               }}
               activeOpacity={0.5}
             />
             <Animated.View style={[styles.modal, { transform: [{ scale: scaleModal }] }]}>
-              {this.show(this.state.activePicker)}
-              <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>ZGJIDHNI</Text>
-              </View>
+              {this.state.loadContent ? (
+                this.show(this.state.activePicker)
+              ) : (
+                <Spinner
+                  style={{
+                    marginLeft: Metrics.screenWidth * 0.35
+                  }}
+                  size={50}
+                  type="ThreeBounce"
+                  color="#ed8063"
+                />
+              )}
+              <Animated.View style={[styles.modalTitleContainer, { transform: [{ translateY }] }]}>
+                {this.state.activePicker === 'dega' || this.state.activePicker === 'pedagogu' ? (
+                  <TextInput
+                    ref={component => (this.textInput = component)}
+                    maxLength={15}
+                    placeholder="Search Name"
+                    placeholderTextColor={Colors.steel}
+                    underlineColorAndroid="rgba(255,255,255, 0.0)"
+                    style={{
+                      height: Metrics.screenHeight * 0.075,
+                      width: Metrics.screenWidth * 0.4,
+                      maxHeight: 80,
+                      color: 'white',
+                      fontSize: 14,
+                      fontWeight: '200',
+                      textAlign: 'center',
+                      fontFamily: 'monospace'
+                    }}
+                    onFocus={() => this.animateS(true)}
+                    onChangeText={value => this.onChange(value)}
+                    onSubmitEditing={() => {
+                      Keyboard.dismiss();
+                      this.animateS(false);
+                    }}
+                  />
+                ) : (
+                  <Text style={styles.modalTitle}>Pick</Text>
+                )}
+              </Animated.View>
             </Animated.View>
           </Animated.View>
         ) : null}

@@ -7,7 +7,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 //import _ from 'lodash';
 //import { parseString } from 'react-native-xml2js';
 //import Spinner from 'react-native-spinkit';
-import colors from './colors.json';
 import { Colors, Metrics } from '../Themes';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
@@ -75,7 +74,7 @@ class MainScreen extends Component {
         )} */}
         <TopTabs
           style={{ flex: 1 }}
-          screenProps={{ orari: colors.colors, changeCard: this.state.changeCard }}
+          screenProps={{ orari: this.orderedCards(), changeCard: this.state.changeCard }}
         />
         <FloatingAction
           actions={actions}

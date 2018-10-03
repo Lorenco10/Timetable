@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Text, Image, View, TouchableOpacity, StatusBar, Animated } from 'react-native';
+import { Text, Image, View, TouchableOpacity, StatusBar, Animated, Alert } from 'react-native';
 import axios from 'axios';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
-//import Spinner from 'react-native-spinkit';
+import Spinner from 'react-native-spinkit';
 import { parseString } from 'react-native-xml2js';
-import { Images } from '../Themes';
+import { Images, Metrics } from '../Themes';
 
 // Styles
 import styles from './Styles/ChoiceScreenStyle';
@@ -32,50 +32,61 @@ class ChoiceScreen extends Component {
   }
 
   fetchData() {
+    const { navigation } = this.props;
     //NativeModules.NavigationBarAndroid.hide();
-    if (_.isEmpty(this.state.deget)) {
+    if (this.state.student) {
       axios
-        .get('http://37.139.119.36:81/orari/getXMLFile/xmlDeget')
-        .then(response => {
-          parseString(response.data, (err, result) => {
-            this.setState({ deget: result.deget.slot });
-          });
-        })
+        .all([
+          axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlDeget'),
+          axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlStudentet')
+        ])
+        .then(
+          axios.spread((deget, orariS) => {
+            parseString(deget.data, (err, degetList) => {
+              this.setState({ deget: degetList.deget.slot });
+            });
+            parseString(orariS.data, (err, orariStudent) => {
+              this.setState({ orariStudent: orariStudent.orari.slot, loading: false }, () => {
+                console.log(this.state.deget[0].dega[0]);
+                console.log(this.state.orariStudent);
+                navigation.navigate('LaunchScreen', {
+                  student: this.state.student,
+                  orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
+                  deget: this.state.student ? this.state.deget : null,
+                  pedagoget: this.state.student ? this.state.pedagoget : null
+                });
+              });
+            });
+          })
+        )
         .catch(error => {
           console.log(error);
         });
-    }
-    if (_.isEmpty(this.state.orariStudent && this.state.student)) {
+    } else {
       axios
-        .get('http://37.139.119.36:81/orari/getXMLFile/xmlStudentet')
-        .then(response => {
-          parseString(response.data, (err, result) => {
-            this.setState({ orariStudent: result.orari.slot });
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    }
-    if (_.isEmpty(this.state.orariPedagog && !this.state.student)) {
-      axios
-        .get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagog')
-        .then(response => {
-          parseString(response.data, (err, result) => {
-            this.setState({ orariPedagog: result.orari.slot });
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        });
-
-      axios
-        .get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagoget')
-        .then(response => {
-          parseString(response.data, (err, result) => {
-            this.setState({ orariPedagog: result.orari.slot });
-          });
-        })
+        .all([
+          axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagoget'),
+          axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagog')
+        ])
+        .then(
+          axios.spread((orariP, pedagoget) => {
+            parseString(pedagoget.data, (err, pedagogetList) => {
+              this.setState({ pedagoget: pedagogetList.pedagoget.slot });
+              console.log(pedagogetList.pedagoget.slot[0].pedagog[0]);
+            });
+            parseString(orariP.data, (err, orariPedagog) => {
+              this.setState({ orariPedagog: orariPedagog.pedagoget, loading: false }, () => {
+                navigation.navigate('LaunchScreen', {
+                  student: this.state.student,
+                  orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
+                  deget: this.state.student ? this.state.deget : null,
+                  pedagoget: !this.state.student ? this.state.pedagoget : null
+                });
+              });
+              console.log(orariPedagog.pedagoget);
+            });
+          })
+        )
         .catch(error => {
           console.log(error);
         });
@@ -84,7 +95,8 @@ class ChoiceScreen extends Component {
   animate(open) {
     Animated.timing(this.textAnim, {
       toValue: open ? 1 : 0,
-      useNativeDriver: true
+      useNativeDriver: true,
+      duration: 400
     }).start();
   }
 
@@ -130,8 +142,6 @@ class ChoiceScreen extends Component {
       extrapolate: 'clamp'
     });
 
-    const { navigation } = this.props;
-
     return (
       <View style={styles.mainContainer}>
         <StatusBar trasparent />
@@ -139,6 +149,7 @@ class ChoiceScreen extends Component {
         <View style={styles.centered}>
           <Image source={Images.launch1} style={styles.logo} />
           <TouchableOpacity
+            activeOpacity={1}
             style={styles.textContainer}
             onPress={() => {
               this.animate(this.state.student);
@@ -169,18 +180,23 @@ class ChoiceScreen extends Component {
             </Animated.Text>
           </TouchableOpacity>
         </View>
+        <Spinner
+          style={{
+            position: 'absolute',
+            left: Metrics.screenWidth * 0.45,
+            top: Metrics.screenHeight * 0.75
+          }}
+          isVisible={this.state.loading}
+          size={60}
+          type="ThreeBounce"
+          color="white"
+        />
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
-            this.fetchData();
-            if (!this.state.loading) {
-              navigation.navigate('LaunchScreen', {
-                student: this.state.student,
-                orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
-                deget: this.state.student ? this.state.deget : null,
-                pedagoget: this.state.student ? this.state.pedagoget : null
-              });
-            }
+            this.setState({ loading: true }, () => {
+              this.fetchData();
+            });
           }}
         >
           <Icon name="navigate-next" size={30} color="white" />

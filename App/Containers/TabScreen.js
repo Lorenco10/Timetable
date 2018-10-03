@@ -47,7 +47,8 @@ class TabScreen extends Component {
       <ScrollView
         style={{
           flex: 1,
-          backgroundColor: '#f9f9f9'
+          //backgroundColor: '#f9f9f9'
+          backgroundColor: 'red'
         }}
         contentContainerStyle={{
           justifyContent: 'center',
@@ -73,11 +74,11 @@ class TabScreen extends Component {
               }}
               key={index}
             >
-              {/* <Text style={styles.degetText}>{prop.lenda}</Text>
-              <Text style={styles.degetText}>{prop.klasa}</Text> */}
-              {/* <Text style={styles.degetText}>{prop.color}</Text>
-              <Text style={styles.degetText}>{prop.category}</Text> */}
-              {/* <Text style={styles.degetText}>
+              <Text style={styles.degetText}>{prop.lenda}</Text>
+              <Text style={styles.degetText}>{prop.klasa}</Text>
+              <Text style={styles.degetText}>{prop.color}</Text>
+              <Text style={styles.degetText}>{prop.category}</Text>
+              <Text style={styles.degetText}>
                 {`${prop.pedagog[0]
                   .split('@')[0]
                   .split('.')[0][0]
@@ -95,7 +96,7 @@ class TabScreen extends Component {
               </Text>
               <Text style={styles.degetText}>
                 {prop.tipi[0][0].toUpperCase() + prop.tipi[0].substring(1)}
-              </Text> */}
+              </Text>
               <View
                 style={[
                   styles.modalTitleContainer,
@@ -109,7 +110,7 @@ class TabScreen extends Component {
                     : null
                 ]}
               >
-                {/* <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text> */}
+                <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text>
               </View>
             </View>
           );

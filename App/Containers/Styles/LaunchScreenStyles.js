@@ -91,7 +91,7 @@ export default StyleSheet.create({
     justifyContent: 'center'
   },
   modalTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Roboto',
     color: 'white',
     letterSpacing: 2
