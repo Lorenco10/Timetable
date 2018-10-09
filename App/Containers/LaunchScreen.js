@@ -5,20 +5,16 @@ import {
   View,
   TouchableOpacity,
   StatusBar,
-  //FlatList,
   ScrollView,
-  /*NativeModules*/
+  NativeModules,
   Animated,
   TextInput,
   Keyboard,
   Easing
 } from 'react-native';
-//import axios from 'axios';
-//import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-spinkit';
-//import { parseString } from 'react-native-xml2js';
 import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
@@ -37,6 +33,7 @@ class LaunchScreen extends Component {
       text: '',
       loadContent: false,
       pedagogu: 'PEDAGOGU',
+      email: '',
       dega: 'DEGA',
       viti: 'VITI',
       paraleli: 'PARALELI'
@@ -44,18 +41,29 @@ class LaunchScreen extends Component {
 
     this.modalAnim = new Animated.Value(0.01);
     this.searchAnim = new Animated.Value(0);
-
-    this.renderItem = this.renderItem.bind(this);
-    this.keyExtractor = this.keyExtractor.bind(this);
     this.show = this.show.bind(this);
     this.animate = this.animate.bind(this);
     this.animateS = this.animateS.bind(this);
+    this.keyboardDidHide = this.keyboardDidHide.bind(this);
     this.onChange = this.onChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidHideListener.remove();
   }
 
   onChange(value) {
     this.textInput.setNativeProps({ text: value });
     this.setState({ text: value });
+  }
+
+  keyboardDidHide() {
+    this.animateS(false);
+    // NativeModules.NavigationBarAndroid.hide();
   }
 
   animate(open, load) {
@@ -77,7 +85,7 @@ class LaunchScreen extends Component {
   animateS(open) {
     Animated.timing(this.searchAnim, {
       toValue: open ? 1 : 0,
-      duration: 20,
+      duration: 500,
       easing: Easing.out(Easing.back(0.01)),
       useNativeDriver: true
     }).start();
@@ -217,7 +225,8 @@ class LaunchScreen extends Component {
                       this.setState({
                         modalVisible: !this.state.modalVisible,
                         text: '',
-                        pedagogu: prop.pedagog[0].toUpperCase()
+                        pedagogu: prop.pedagog[0].toUpperCase(),
+                        email: prop.email[0]
                       });
                     }, 100);
                     this.animate(!this.state.modalVisible, true);
@@ -232,16 +241,18 @@ class LaunchScreen extends Component {
             return (
               <TouchableOpacity
                 onPress={() => {
+                  console.log(prop.email[0]);
                   setTimeout(() => {
                     this.setState({
                       modalVisible: !this.state.modalVisible,
-                      pedagogu: prop.pedagog[0].toUpperCase()
+                      pedagogu: prop.pedagog[0].toUpperCase(),
+                      email: prop.email[0]
                     });
                   }, 100);
                   this.animate(!this.state.modalVisible, true);
                 }}
                 style={{ flex: 1 }}
-                key={prop.dega}
+                key={prop.email[0]}
               >
                 <Text style={styles.degetText}>{prop.pedagog[0].toUpperCase()}</Text>
               </TouchableOpacity>
@@ -266,7 +277,7 @@ class LaunchScreen extends Component {
     );
   }
 
-  keyExtractor(item, index) {
+  /*   keyExtractor(item, index) {
     return index.toString();
   }
 
@@ -282,7 +293,7 @@ class LaunchScreen extends Component {
         <Text style={styles.degetText}>{item.dega}</Text>
       </TouchableOpacity>
     );
-  }
+  } */
 
   render() {
     const scaleModal = this.modalAnim.interpolate({
@@ -297,7 +308,7 @@ class LaunchScreen extends Component {
     });
     const translateY = this.searchAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, -Metrics.screenHeight * 0.38],
+      outputRange: [0, -Metrics.screenHeight * 0.37],
       extrapolate: 'clamp'
     });
 
@@ -306,7 +317,10 @@ class LaunchScreen extends Component {
     return (
       <View style={styles.mainContainer}>
         <StatusBar trasparent />
-        <LinearGradient colors={['#141E30', '#243B55']} style={styles.backgroundTheme} />
+        <LinearGradient
+          colors={[Colors.gradient1, Colors.gradient2]}
+          style={styles.backgroundTheme}
+        />
         <View style={styles.centered}>
           <Image source={Images.launch} style={styles.logo} />
           {this.state.student ? (
@@ -372,12 +386,22 @@ class LaunchScreen extends Component {
           )}
         </View>
         <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => {
+            NativeModules.NavigationBarAndroid.hide();
+            navigation.goBack();
+          }}
+        >
+          <Icon name="navigate-before" size={30} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
             navigation.navigate('MainScreen', {
               orari: this.state.orari,
               dega: this.state.dega,
-              pedagogu: this.state.pedagogu,
+              email: this.state.pedagogu !== 'PEDAGOGU' ? this.state.email : null,
+              pedagogu: this.state.pedagogu !== 'PEDAGOGU' ? this.state.pedagogu : null,
               viti: this.state.viti,
               paraleli: this.state.paraleli
             });
@@ -386,27 +410,14 @@ class LaunchScreen extends Component {
           <Icon name="navigate-next" size={30} color="white" />
         </TouchableOpacity>
         {this.state.modalVisible ? (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              elevation: 20,
-              opacity: fadeModal,
-              //transform: [{ scale: fadeModal }],
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+          <Animated.View style={[styles.modalContainer, { opacity: fadeModal }]}>
             <TouchableOpacity
               style={[styles.backgroundTheme, { backgroundColor: 'black', opacity: 0.5 }]}
               onPress={() => {
                 setTimeout(() => {
                   this.setState({ modalVisible: !this.state.modalVisible, text: '' });
                 }, 100);
-                this.animate(this.state.modalVisible, true);
+                this.animate(!this.state.modalVisible, true);
               }}
               activeOpacity={0.5}
             />
@@ -414,14 +425,7 @@ class LaunchScreen extends Component {
               {this.state.loadContent ? (
                 this.show(this.state.activePicker)
               ) : (
-                <Spinner
-                  style={{
-                    marginLeft: Metrics.screenWidth * 0.35
-                  }}
-                  size={50}
-                  type="ThreeBounce"
-                  color="#ed8063"
-                />
+                <Spinner style={styles.spinner} size={50} type="ThreeBounce" color="#ed8063" />
               )}
               <Animated.View style={[styles.modalTitleContainer, { transform: [{ translateY }] }]}>
                 {this.state.activePicker === 'dega' || this.state.activePicker === 'pedagogu' ? (
@@ -429,23 +433,15 @@ class LaunchScreen extends Component {
                     ref={component => (this.textInput = component)}
                     maxLength={15}
                     placeholder="Search Name"
-                    placeholderTextColor={Colors.steel}
+                    placeholderTextColor="white"
                     underlineColorAndroid="rgba(255,255,255, 0.0)"
-                    style={{
-                      height: Metrics.screenHeight * 0.075,
-                      width: Metrics.screenWidth * 0.4,
-                      maxHeight: 80,
-                      color: 'white',
-                      fontSize: 14,
-                      fontWeight: '200',
-                      textAlign: 'center',
-                      fontFamily: 'monospace'
-                    }}
+                    style={styles.textInput}
                     onFocus={() => this.animateS(true)}
                     onChangeText={value => this.onChange(value)}
                     onSubmitEditing={() => {
                       Keyboard.dismiss();
                       this.animateS(false);
+                      // NativeModules.NavigationBarAndroid.hide();
                     }}
                   />
                 ) : (

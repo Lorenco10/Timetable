@@ -73,6 +73,18 @@ export default StyleSheet.create({
     left: Metrics.screenWidth * 0.8,
     top: Metrics.screenHeight * 0.9
   },
+  backButton: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 56,
+    width: 56,
+    //elevation: 10,
+    borderRadius: 28,
+    backgroundColor: Colors.transparent,
+    left: Metrics.screenWidth * 0.05,
+    top: Metrics.screenHeight * 0.05
+  },
   modal: {
     backgroundColor: 'white',
     borderRadius: 4,
@@ -102,5 +114,29 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 0.5,
     marginTop: 15
+  },
+  modalContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    elevation: 20,
+    //transform: [{ scale: fadeModal }],
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  spinner: {
+    marginLeft: Metrics.screenWidth * 0.35
+  },
+  textInput: {
+    height: Metrics.screenHeight * 0.075,
+    width: Metrics.screenWidth * 0.7,
+    maxHeight: 80,
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '200',
+    textAlign: 'center',
+    fontFamily: 'monospace'
   }
 });

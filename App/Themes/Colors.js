@@ -25,7 +25,9 @@ const colors = {
   background1: '#f9f9f9',
   button: '#aa455b',
   actionButton: '#ed8063',
-  modalButton: '#243B55'
+  modalButton: '#243B55',
+  gradient1: '#141E30',
+  gradient2: '#243B55'
 };
 
 export default colors;

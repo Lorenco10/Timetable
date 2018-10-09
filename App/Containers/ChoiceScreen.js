@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { Text, Image, View, TouchableOpacity, StatusBar, Animated, Alert } from 'react-native';
+import {
+  //Text,
+  Image,
+  View,
+  TouchableOpacity,
+  StatusBar,
+  Animated,
+  AsyncStorage
+} from 'react-native';
 import axios from 'axios';
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -27,14 +35,36 @@ class ChoiceScreen extends Component {
 
     this.fetchData = this.fetchData.bind(this);
     this.animate = this.animate.bind(this);
-
-    // const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+    this.storeItem = this.storeItem.bind(this);
+    this.retrieveItem = this.retrieveItem.bind(this);
   }
 
-  fetchData() {
+  async storeItem(key, value) {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async retrieveItem(key, key2) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      const value2 = await AsyncStorage.getItem(key2);
+      // this.setState({ [`${key}`]: JSON.parse(value) });
+      if (value !== null && value2 !== null) {
+        return { val1: JSON.parse(value), val2: JSON.parse(value2) };
+      }
+      return value;
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  fetchData(orariStudent1, deget1, orariPedagog1, pedagoget1) {
     const { navigation } = this.props;
-    //NativeModules.NavigationBarAndroid.hide();
-    if (this.state.student) {
+    if (this.state.student && orariStudent1 === null && deget1 === null) {
+      console.log('calledS');
       axios
         .all([
           axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlDeget'),
@@ -43,12 +73,12 @@ class ChoiceScreen extends Component {
         .then(
           axios.spread((deget, orariS) => {
             parseString(deget.data, (err, degetList) => {
+              this.storeItem('deget', JSON.stringify(degetList.deget.slot));
               this.setState({ deget: degetList.deget.slot });
             });
             parseString(orariS.data, (err, orariStudent) => {
+              this.storeItem('orariStudent', JSON.stringify(orariStudent.orari.slot));
               this.setState({ orariStudent: orariStudent.orari.slot, loading: false }, () => {
-                console.log(this.state.deget[0].dega[0]);
-                console.log(this.state.orariStudent);
                 navigation.navigate('LaunchScreen', {
                   student: this.state.student,
                   orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
@@ -62,7 +92,8 @@ class ChoiceScreen extends Component {
         .catch(error => {
           console.log(error);
         });
-    } else {
+    } else if (!this.state.student && orariPedagog1 === null && pedagoget1 === null) {
+      console.log('calledP');
       axios
         .all([
           axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagoget'),
@@ -71,10 +102,11 @@ class ChoiceScreen extends Component {
         .then(
           axios.spread((orariP, pedagoget) => {
             parseString(pedagoget.data, (err, pedagogetList) => {
+              this.storeItem('pedagoget', JSON.stringify(pedagogetList.pedagoget.slot));
               this.setState({ pedagoget: pedagogetList.pedagoget.slot });
-              console.log(pedagogetList.pedagoget.slot[0].pedagog[0]);
             });
             parseString(orariP.data, (err, orariPedagog) => {
+              this.storeItem('orariPedagog', JSON.stringify(orariPedagog.pedagoget));
               this.setState({ orariPedagog: orariPedagog.pedagoget, loading: false }, () => {
                 navigation.navigate('LaunchScreen', {
                   student: this.state.student,
@@ -83,13 +115,34 @@ class ChoiceScreen extends Component {
                   pedagoget: !this.state.student ? this.state.pedagoget : null
                 });
               });
-              console.log(orariPedagog.pedagoget);
             });
           })
         )
         .catch(error => {
           console.log(error);
         });
+    } else {
+      console.log('called');
+      // console.log(orariPedagog1.pedagog);
+      //console.log(pedagoget1);
+      // console.log(orariStudent1);
+      this.setState(
+        {
+          orariStudent: orariStudent1,
+          orariPedagog: orariPedagog1.pedagog,
+          deget: deget1,
+          loading: false,
+          pedagoget: pedagoget1
+        },
+        () => {
+          navigation.navigate('LaunchScreen', {
+            student: this.state.student,
+            orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
+            deget: this.state.student ? this.state.deget : null,
+            pedagoget: !this.state.student ? this.state.pedagoget : null
+          });
+        }
+      );
     }
   }
   animate(open) {
@@ -195,7 +248,23 @@ class ChoiceScreen extends Component {
           style={styles.nextButton}
           onPress={() => {
             this.setState({ loading: true }, () => {
-              this.fetchData();
+              if (!this.state.student) {
+                this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
+                  if (pedagogetOrari !== null) {
+                    this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
+                  } else {
+                    this.fetchData([], [], null, null);
+                  }
+                });
+              } else {
+                this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
+                  if (degetOrari !== null) {
+                    this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
+                  } else {
+                    this.fetchData(null, null, [], []);
+                  }
+                });
+              }
             });
           }}
         >

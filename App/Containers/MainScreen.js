@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Alert } from 'react-native';
+import { View } from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 import { FloatingAction } from 'react-native-floating-action';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-//import axios from 'axios';
-//import _ from 'lodash';
-//import { parseString } from 'react-native-xml2js';
-//import Spinner from 'react-native-spinkit';
+/* import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded
+} from 'react-native-admob'; */
 import { Colors, Metrics } from '../Themes';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
-
 import TopTabScreen from './TopTabScreen';
 
 // Styles
@@ -18,7 +17,7 @@ import TopTabScreen from './TopTabScreen';
 
 const actions = [
   {
-    text: 'Card Style',
+    //text: 'Card Style',
     color: Colors.actionButton,
     icon: <Icon name="swap-vert" size={20} color="white" />,
     name: 'bt_card',
@@ -34,6 +33,8 @@ class MainScreen extends Component {
       dega: props.navigation.state.params.dega,
       viti: props.navigation.state.params.viti,
       paraleli: props.navigation.state.params.paraleli,
+      email: props.navigation.state.params.email,
+      pedagogu: props.navigation.state.params.pedagogu,
       changeCard: false
     };
 
@@ -47,6 +48,16 @@ class MainScreen extends Component {
   }
 
   orderedCards() {
+    if (this.state.pedagogu !== null) {
+      const orderedOrari = this.state.orari.filter(prop => {
+        if (this.state.email === prop.$.email) {
+          return prop;
+        }
+        return null;
+      });
+      return orderedOrari;
+    }
+
     const orderedOrari = this.state.orari.filter(prop => {
       if (
         this.state.dega === prop.dega[0] &&
@@ -64,31 +75,29 @@ class MainScreen extends Component {
     //console.log(this.orderedCards());
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-        <StatusBar hidden />
-        {/* {this.state.loading ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Spinner isVisible size={80} type={'ChasingDots'} color={Colors.button} />
-          </View>
-        ) : (
-          <TopTabs style={{ flex: 1 }} screenProps={{ orari: this.orderedCards() }} />
-        )} */}
         <TopTabs
           style={{ flex: 1 }}
-          screenProps={{ orari: this.orderedCards(), changeCard: this.state.changeCard }}
+          screenProps={{
+            orari: this.orderedCards(),
+            pedagogu: this.state.pedagogu,
+            changeCard: this.state.changeCard
+          }}
         />
         <FloatingAction
+          ref={ref => {
+            this.floatingAction = ref;
+          }}
           actions={actions}
-          // overrideWithAction
           color={Colors.actionButton}
-          distanceToEdge={40}
+          distanceToEdge={55}
           onPressItem={name => {
-            this.setState({
-              changeCard: true
-            });
             if (name === 'bt_card') {
-              this.setState({
-                changeCard: true
-              });
+              this.floatingAction.animateButton();
+              setTimeout(() => {
+                this.setState({
+                  changeCard: !this.state.changeCard
+                });
+              }, 0.01);
             }
           }}
         />

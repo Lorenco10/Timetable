@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StatusBar } from 'react-native';
+import { View, StatusBar, Text } from 'react-native';
 import Spinner from 'react-native-spinkit';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
@@ -11,18 +11,14 @@ import TabScreen from './TabScreen';
 export default class TopTabScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      orari: this.props.screenProps.orari,
-      changeCard: this.props.screenProps.changeCard,
-      dita: this.props.dita
-    };
 
     this.orderedCards = this.orderedCards.bind(this);
   }
 
   orderedCards() {
-    const orderedOrari = this.props.screenProps.orari.filter(prop => {
-      if (this.state.dita === prop.dita[0]) {
+    const { screenProps } = this.props;
+    const orderedOrari = screenProps.orari.filter(prop => {
+      if (this.props.dita === prop.dita[0]) {
         return prop;
       }
       return null;
@@ -33,14 +29,15 @@ export default class TopTabScreen extends Component {
   }
 
   render() {
+    const { screenProps } = this.props;
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
         <StatusBar trasparent />
-        <TabScreen style={{ flex: 1 }} orari={this.orderedCards()} />
         <TabScreen
+          pedagogu={screenProps.pedagogu}
           style={{ flex: 1 }}
-          orari={this.state.orari}
-          changeCard={this.state.changeCard}
+          orari={this.orderedCards()}
+          changeCard={screenProps.changeCard}
         />
       </View>
     );

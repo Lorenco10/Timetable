@@ -5,12 +5,12 @@ export default StyleSheet.create({
   ...ApplicationStyles.screen,
   modalTitleContainer: {
     backgroundColor: Colors.button,
-    height: '20%',
+    height: '15%',
     width: '100%',
     borderBottomRightRadius: 5,
     borderBottomLeftRadius: 5,
-    //elevation: 5,
-    //alignSelf: 'flex-end',
+    position: 'absolute',
+    top: Metrics.screenHeight * 0.32 - Metrics.screenHeight * 0.32 * 0.15,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -18,6 +18,7 @@ export default StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Roboto',
     color: 'white',
+    textAlign: 'center',
     letterSpacing: 2
   },
   degetText: {
@@ -25,9 +26,10 @@ export default StyleSheet.create({
     fontSize: 12,
     color: 'black',
     textAlign: 'center',
+    textAlignVerical: 'center',
     letterSpacing: 2,
-    paddingRight: 5,
-    paddingLeft: 5,
-    paddingBottom: 5
+    paddingRight: '2%',
+    paddingLeft: '2%'
+    //paddingTop: '2%'
   }
 });

@@ -18,7 +18,7 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   text: {
-    fontFamily: 'Roboto',
+    fontFamily: 'sans-serif-thin',
     fontSize: 80,
     color: 'white',
     textAlign: 'center'
