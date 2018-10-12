@@ -10,7 +10,7 @@ export default StyleSheet.create({
     borderBottomRightRadius: 5,
     borderBottomLeftRadius: 5,
     position: 'absolute',
-    top: Metrics.screenHeight * 0.32 - Metrics.screenHeight * 0.32 * 0.15,
+    top: Metrics.screenHeight * 0.3 - Metrics.screenHeight * 0.3 * 0.15,
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -26,10 +26,10 @@ export default StyleSheet.create({
     fontSize: 12,
     color: 'black',
     textAlign: 'center',
-    textAlignVerical: 'center',
+    textAlignVertical: 'center',
     letterSpacing: 2,
-    paddingRight: '2%',
-    paddingLeft: '2%'
+    paddingRight: '3%',
+    paddingLeft: '3%'
     //paddingTop: '2%'
   }
 });

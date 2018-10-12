@@ -71,7 +71,7 @@ export default StyleSheet.create({
     borderRadius: 28,
     backgroundColor: Colors.transparent,
     left: Metrics.screenWidth * 0.8,
-    top: Metrics.screenHeight * 0.9
+    top: Metrics.screenHeight * 0.882
   },
   backButton: {
     position: 'absolute',

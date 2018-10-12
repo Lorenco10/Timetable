@@ -90,14 +90,14 @@ class TabScreen extends Component {
                     <View
                       style={{
                         alignItems: changeCard ? 'flex-end' : 'center',
-                        margin: 9,
+                        margin: 4,
                         backgroundColor: 'white',
                         borderRadius: 5,
                         elevation: 2,
                         height: changeCard
                           ? Metrics.screenHeight * 0.22
-                          : Metrics.screenHeight * 0.32,
-                        width: changeCard ? Metrics.screenWidth * 0.85 : Metrics.screenWidth * 0.45
+                          : Metrics.screenHeight * 0.3,
+                        width: changeCard ? Metrics.screenWidth * 0.88 : Metrics.screenWidth * 0.47
                       }}
                       key={index}
                     >
@@ -107,10 +107,10 @@ class TabScreen extends Component {
                           alignItems: 'center',
                           height: changeCard
                             ? Metrics.screenHeight * 0.22
-                            : Metrics.screenHeight * 0.32 - Metrics.screenHeight * 0.32 * 0.18,
+                            : Metrics.screenHeight * 0.3 - Metrics.screenHeight * 0.3 * 0.18,
                           width: changeCard
-                            ? Metrics.screenWidth * 0.85 - Metrics.screenWidth * 0.85 * 0.16
-                            : Metrics.screenWidth * 0.45,
+                            ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
+                            : Metrics.screenWidth * 0.47,
                           borderTopLeftRadius: 5,
                           borderTopRightRadius: changeCard ? 0 : 5,
                           borderBottomLeftRadius: changeCard ? 5 : 0
@@ -183,14 +183,14 @@ class TabScreen extends Component {
                     <View
                       style={{
                         alignItems: changeCard ? 'flex-end' : 'center',
-                        margin: 9,
+                        margin: 4,
                         backgroundColor: 'white',
                         borderRadius: 5,
                         elevation: 2,
                         height: changeCard
                           ? Metrics.screenHeight * 0.38
-                          : Metrics.screenHeight * 0.45,
-                        width: changeCard ? Metrics.screenWidth * 0.88 : Metrics.screenWidth * 0.45
+                          : Metrics.screenHeight * 0.48,
+                        width: changeCard ? Metrics.screenWidth * 0.88 : Metrics.screenWidth * 0.47
                       }}
                       key={index}
                     >
@@ -199,10 +199,10 @@ class TabScreen extends Component {
                           justifyContent: 'center',
                           height: changeCard
                             ? Metrics.screenHeight * 0.38
-                            : Metrics.screenHeight * 0.45 - Metrics.screenHeight * 0.45 * 0.12,
+                            : Metrics.screenHeight * 0.48 - Metrics.screenHeight * 0.48 * 0.12,
                           width: changeCard
                             ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
-                            : Metrics.screenWidth * 0.45,
+                            : Metrics.screenWidth * 0.47,
                           borderTopLeftRadius: 5,
                           borderTopRightRadius: changeCard ? 0 : 5,
                           borderBottomLeftRadius: changeCard ? 5 : 0
@@ -267,7 +267,7 @@ class TabScreen extends Component {
                             : {
                                 height: '12%',
                                 top:
-                                  Metrics.screenHeight * 0.45 - Metrics.screenHeight * 0.45 * 0.12
+                                  Metrics.screenHeight * 0.48 - Metrics.screenHeight * 0.48 * 0.12
                               }
                         ]}
                       >

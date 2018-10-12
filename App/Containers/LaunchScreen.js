@@ -10,7 +10,8 @@ import {
   Animated,
   TextInput,
   Keyboard,
-  Easing
+  Easing,
+  AsyncStorage
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -31,6 +32,8 @@ class LaunchScreen extends Component {
       modalVisible: false,
       activePicker: '',
       text: '',
+      toggle: false,
+      activated: false,
       loadContent: false,
       pedagogu: 'PEDAGOGU',
       email: '',
@@ -41,19 +44,71 @@ class LaunchScreen extends Component {
 
     this.modalAnim = new Animated.Value(0.01);
     this.searchAnim = new Animated.Value(0);
+    this.toggleAnim = new Animated.Value(0);
+
     this.show = this.show.bind(this);
     this.animate = this.animate.bind(this);
     this.animateS = this.animateS.bind(this);
     this.keyboardDidHide = this.keyboardDidHide.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.animateToggle = this.animateToggle.bind(this);
+    this.storeItem = this.storeItem.bind(this);
+    this.retrieveItem = this.retrieveItem.bind(this);
+    this.deleteItem = this.deleteItem.bind(this);
   }
 
   componentDidMount() {
+    const { student } = this.state;
+    if (student) {
+      this.retrieveItem('infoS').then(info1 => {
+        if (info1 !== null) {
+          const val = JSON.parse(info1);
+          this.setState({
+            dega: val.dega,
+            paraleli: val.paraleli,
+            viti: val.viti,
+            toggle: true,
+            activated: true
+          });
+          console.log(info1);
+        }
+      });
+    } else {
+      this.retrieveItem('infoP').then(info1 => {
+        if (info1 !== null) {
+          const val = JSON.parse(info1);
+          this.setState(
+            {
+              pedagogu: val.pedagogu,
+              email: val.email,
+              toggle: true,
+              activated: true
+            },
+            () => {
+              console.log(this.state.email);
+            }
+          );
+          console.log(info1);
+        }
+      });
+    }
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
   }
 
   componentWillUnmount() {
     this.keyboardDidHideListener.remove();
+    const { dega, viti, paraleli, toggle, student, pedagogu, email } = this.state;
+    if (toggle) {
+      console.log('stored');
+      if (student) {
+        this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
+      } else {
+        this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
+      }
+    } else {
+      console.log('deleted');
+      this.deleteItem(student ? 'infoS' : 'infoP');
+    }
   }
 
   onChange(value) {
@@ -64,6 +119,34 @@ class LaunchScreen extends Component {
   keyboardDidHide() {
     this.animateS(false);
     // NativeModules.NavigationBarAndroid.hide();
+  }
+
+  async storeItem(key, value) {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async deleteItem(key) {
+    try {
+      await AsyncStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async retrieveItem(key) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        return value;
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   animate(open, load) {
@@ -86,6 +169,15 @@ class LaunchScreen extends Component {
     Animated.timing(this.searchAnim, {
       toValue: open ? 1 : 0,
       duration: 500,
+      easing: Easing.out(Easing.back(0.01)),
+      useNativeDriver: true
+    }).start();
+  }
+
+  animateToggle(move) {
+    Animated.timing(this.toggleAnim, {
+      toValue: move ? 1 : 0,
+      duration: 200,
       easing: Easing.out(Easing.back(0.01)),
       useNativeDriver: true
     }).start();
@@ -311,8 +403,14 @@ class LaunchScreen extends Component {
       outputRange: [0, -Metrics.screenHeight * 0.37],
       extrapolate: 'clamp'
     });
+    const translateToggle = this.toggleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: !this.state.activated ? [-34, 0] : [0, -34],
+      extrapolate: 'clamp'
+    });
 
     const { navigation } = this.props;
+    const { dega, paraleli, viti, toggle } = this.state;
 
     return (
       <View style={styles.mainContainer}>
@@ -451,6 +549,49 @@ class LaunchScreen extends Component {
             </Animated.View>
           </Animated.View>
         ) : null}
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            setTimeout(() => {
+              this.setState({ toggle: !this.state.toggle });
+            }, 0.01);
+            this.animateToggle(this.state.activated ? this.state.toggle : !this.state.toggle);
+          }}
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 35,
+            width: 80,
+            borderRadius: 30,
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            top: Metrics.screenHeight * 0.91,
+            left: 25
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              height: 10,
+              width: 50,
+              borderRadius: 30,
+              backgroundColor: 'white'
+            }}
+          >
+            <Animated.View
+              style={{
+                height: 20,
+                width: 20,
+                marginRight: -2,
+                borderRadius: 10,
+                elevation: 5,
+                backgroundColor: this.state.toggle ? '#FFB300' : '#BDBDBD',
+                transform: [{ translateX: translateToggle }]
+              }}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }

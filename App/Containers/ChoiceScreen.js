@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   StatusBar,
   Animated,
-  AsyncStorage
+  AsyncStorage,
+  Easing
 } from 'react-native';
 import axios from 'axios';
-import _ from 'lodash';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import Spinner from 'react-native-spinkit';
@@ -27,16 +27,19 @@ class ChoiceScreen extends Component {
       orariStudent: [],
       orariPedagog: [],
       pedagoget: [],
+      toggle: false,
       student: true,
       loading: false
     };
 
     this.textAnim = new Animated.Value(0);
+    this.toggleAnim = new Animated.Value(0);
 
     this.fetchData = this.fetchData.bind(this);
     this.animate = this.animate.bind(this);
     this.storeItem = this.storeItem.bind(this);
     this.retrieveItem = this.retrieveItem.bind(this);
+    this.animateToggle = this.animateToggle.bind(this);
   }
 
   async storeItem(key, value) {
@@ -153,6 +156,15 @@ class ChoiceScreen extends Component {
     }).start();
   }
 
+  animateToggle(move) {
+    Animated.timing(this.toggleAnim, {
+      toValue: move ? 1 : 0,
+      duration: 200,
+      easing: Easing.out(Easing.back(0.01)),
+      useNativeDriver: true
+    }).start();
+  }
+
   render() {
     const opacityS = this.textAnim.interpolate({
       inputRange: [0, 1],
@@ -192,6 +204,11 @@ class ChoiceScreen extends Component {
     const moveyP = this.textAnim.interpolate({
       inputRange: [0, 1],
       outputRange: [80, 0],
+      extrapolate: 'clamp'
+    });
+    const translateX = this.toggleAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-34, 0],
       extrapolate: 'clamp'
     });
 
@@ -250,7 +267,7 @@ class ChoiceScreen extends Component {
             this.setState({ loading: true }, () => {
               if (!this.state.student) {
                 this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
-                  if (pedagogetOrari !== null) {
+                  if (pedagogetOrari !== null && !this.state.toggle) {
                     this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
                   } else {
                     this.fetchData([], [], null, null);
@@ -258,7 +275,7 @@ class ChoiceScreen extends Component {
                 });
               } else {
                 this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
-                  if (degetOrari !== null) {
+                  if (degetOrari !== null && !this.state.toggle) {
                     this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
                   } else {
                     this.fetchData(null, null, [], []);
@@ -269,6 +286,49 @@ class ChoiceScreen extends Component {
           }}
         >
           <Icon name="navigate-next" size={30} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            setTimeout(() => {
+              this.setState({ toggle: !this.state.toggle });
+            }, 0.01);
+            this.animateToggle(!this.state.toggle);
+          }}
+          style={{
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 35,
+            width: 80,
+            borderRadius: 30,
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            top: Metrics.screenHeight * 0.9,
+            left: 25
+          }}
+        >
+          <View
+            style={{
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              height: 10,
+              width: 50,
+              borderRadius: 30,
+              backgroundColor: 'white'
+            }}
+          >
+            <Animated.View
+              style={{
+                height: 20,
+                width: 20,
+                marginRight: -2,
+                elevation: 5,
+                borderRadius: 10,
+                transform: [{ translateX }],
+                backgroundColor: this.state.toggle ? '#FFB300' : '#BDBDBD'
+              }}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     );

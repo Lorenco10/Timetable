@@ -35,7 +35,7 @@ class MainScreen extends Component {
       paraleli: props.navigation.state.params.paraleli,
       email: props.navigation.state.params.email,
       pedagogu: props.navigation.state.params.pedagogu,
-      changeCard: false
+      changeCard: true
     };
 
     this.orderedCards = this.orderedCards.bind(this);
