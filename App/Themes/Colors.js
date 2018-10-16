@@ -22,12 +22,14 @@ const colors = {
   border: '#483F53',
   banner: '#5F3E63',
   text: '#E0D7E5',
-  background1: '#f9f9f9',
+  background1: '#FAFAFA',
   button: '#aa455b',
-  actionButton: '#ed8063',
+  actionButton: '#187894',
   modalButton: '#243B55',
   gradient1: '#141E30',
-  gradient2: '#243B55'
+  gradient2: '#243B55',
+  toggleActive: '#F44336',
+  togglePassive: '#BDBDBD'
 };
 
 export default colors;

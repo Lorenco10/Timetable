@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import {
-  //Text,
+  NetInfo,
   Image,
   View,
   TouchableOpacity,
   StatusBar,
   Animated,
   AsyncStorage,
-  Easing
+  Easing,
+  Text
 } from 'react-native';
 import axios from 'axios';
+import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import Spinner from 'react-native-spinkit';
 import { parseString } from 'react-native-xml2js';
-import { Images, Metrics } from '../Themes';
+import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/ChoiceScreenStyle';
@@ -29,7 +31,10 @@ class ChoiceScreen extends Component {
       pedagoget: [],
       toggle: false,
       student: true,
-      loading: false
+      loading: false,
+      isConnected: false,
+      showAlert: false,
+      errorMessage: 'No Network Detected'
     };
 
     this.textAnim = new Animated.Value(0);
@@ -40,14 +45,30 @@ class ChoiceScreen extends Component {
     this.storeItem = this.storeItem.bind(this);
     this.retrieveItem = this.retrieveItem.bind(this);
     this.animateToggle = this.animateToggle.bind(this);
+    this.handleConnectivityChange = this.handleConnectivityChange.bind(this);
+  }
+
+  componentDidMount() {
+    SplashScreen.hide();
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+
+    NetInfo.isConnected.fetch().done(isConnected => {
+      this.setState({ isConnected });
+    });
+  }
+
+  componentWillUnmount() {
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+  }
+
+  handleConnectivityChange(isConnected) {
+    this.setState({ isConnected });
   }
 
   async storeItem(key, value) {
     try {
       await AsyncStorage.setItem(key, value);
-    } catch (error) {
-      console.log(error.message);
-    }
+    } catch (error) {}
   }
 
   async retrieveItem(key, key2) {
@@ -60,14 +81,13 @@ class ChoiceScreen extends Component {
       }
       return value;
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 
   fetchData(orariStudent1, deget1, orariPedagog1, pedagoget1) {
     const { navigation } = this.props;
     if (this.state.student && orariStudent1 === null && deget1 === null) {
-      console.log('calledS');
       axios
         .all([
           axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlDeget'),
@@ -92,11 +112,10 @@ class ChoiceScreen extends Component {
             });
           })
         )
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
+          this.setState({ showAlert: true, errorMessage: 'Failed to fetch data' });
         });
     } else if (!this.state.student && orariPedagog1 === null && pedagoget1 === null) {
-      console.log('calledP');
       axios
         .all([
           axios.get('http://37.139.119.36:81/orari/getXMLFile/xmlPedagoget'),
@@ -110,42 +129,45 @@ class ChoiceScreen extends Component {
             });
             parseString(orariP.data, (err, orariPedagog) => {
               this.storeItem('orariPedagog', JSON.stringify(orariPedagog.pedagoget));
-              this.setState({ orariPedagog: orariPedagog.pedagoget, loading: false }, () => {
-                navigation.navigate('LaunchScreen', {
-                  student: this.state.student,
-                  orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
-                  deget: this.state.student ? this.state.deget : null,
-                  pedagoget: !this.state.student ? this.state.pedagoget : null
-                });
-              });
+              this.setState(
+                { orariPedagog: orariPedagog.pedagoget.pedagog, loading: false },
+                () => {
+                  navigation.navigate('LaunchScreen', {
+                    student: this.state.student,
+                    orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
+                    deget: this.state.student ? this.state.deget : null,
+                    pedagoget: !this.state.student ? this.state.pedagoget : null
+                  });
+                }
+              );
             });
           })
         )
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
+          this.setState({ showAlert: true, errorMessage: 'Failed to fetch data' });
         });
     } else {
-      console.log('called');
-      // console.log(orariPedagog1.pedagog);
-      //console.log(pedagoget1);
-      // console.log(orariStudent1);
-      this.setState(
-        {
-          orariStudent: orariStudent1,
-          orariPedagog: orariPedagog1.pedagog,
-          deget: deget1,
-          loading: false,
-          pedagoget: pedagoget1
-        },
-        () => {
-          navigation.navigate('LaunchScreen', {
-            student: this.state.student,
-            orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
-            deget: this.state.student ? this.state.deget : null,
-            pedagoget: !this.state.student ? this.state.pedagoget : null
-          });
-        }
-      );
+      this.setState({ loading: true, showAlert: false }, () => {
+        setTimeout(() => {
+          this.setState(
+            {
+              orariStudent: orariStudent1,
+              orariPedagog: orariPedagog1.pedagog,
+              deget: deget1,
+              loading: false,
+              pedagoget: pedagoget1
+            },
+            () => {
+              navigation.navigate('LaunchScreen', {
+                student: this.state.student,
+                orari: this.state.student ? this.state.orariStudent : this.state.orariPedagog,
+                deget: this.state.student ? this.state.deget : null,
+                pedagoget: !this.state.student ? this.state.pedagoget : null
+              });
+            }
+          );
+        }, 250);
+      });
     }
   }
   animate(open) {
@@ -208,13 +230,13 @@ class ChoiceScreen extends Component {
     });
     const translateX = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [-34, 0],
+      outputRange: [-30, 0],
       extrapolate: 'clamp'
     });
 
     return (
       <View style={styles.mainContainer}>
-        <StatusBar trasparent />
+        <StatusBar />
         <LinearGradient colors={['#141E30', '#243B55']} style={styles.background} />
         <View style={styles.centered}>
           <Image source={Images.launch1} style={styles.logo} />
@@ -261,28 +283,53 @@ class ChoiceScreen extends Component {
           type="ThreeBounce"
           color="white"
         />
+        {this.state.showAlert ? (
+          <View style={styles.alertBox}>
+            <Text style={styles.alertText}>{this.state.errorMessage}</Text>
+          </View>
+        ) : null}
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
-            this.setState({ loading: true }, () => {
-              if (!this.state.student) {
-                this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
-                  if (pedagogetOrari !== null && !this.state.toggle) {
-                    this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
-                  } else {
-                    this.fetchData([], [], null, null);
-                  }
-                });
-              } else {
-                this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
-                  if (degetOrari !== null && !this.state.toggle) {
-                    this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
-                  } else {
-                    this.fetchData(null, null, [], []);
-                  }
-                });
-              }
-            });
+            if (!this.state.student) {
+              this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
+                if (pedagogetOrari !== null && !this.state.toggle) {
+                  this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
+                } else {
+                  this.setState(
+                    {
+                      loading: this.state.isConnected,
+                      showAlert: !this.state.isConnected,
+                      errorMessage: 'No Network Detected'
+                    },
+                    () => {
+                      if (this.state.isConnected) {
+                        this.fetchData([], [], null, null);
+                      }
+                    }
+                  );
+                }
+              });
+            } else {
+              this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
+                if (degetOrari !== null && !this.state.toggle) {
+                  this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
+                } else {
+                  this.setState(
+                    {
+                      loading: this.state.isConnected,
+                      showAlert: !this.state.isConnected,
+                      errorMessage: 'No Network Detected'
+                    },
+                    () => {
+                      if (this.state.isConnected) {
+                        this.fetchData(null, null, [], []);
+                      }
+                    }
+                  );
+                }
+              });
+            }
           }}
         >
           <Icon name="navigate-next" size={30} color="white" />
@@ -295,41 +342,23 @@ class ChoiceScreen extends Component {
             }, 0.01);
             this.animateToggle(!this.state.toggle);
           }}
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 35,
-            width: 80,
-            borderRadius: 30,
-            backgroundColor: 'rgba(255,255,255,0.2)',
-            top: Metrics.screenHeight * 0.9,
-            left: 25
-          }}
+          style={styles.toggleBox}
         >
-          <View
-            style={{
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-              height: 10,
-              width: 50,
-              borderRadius: 30,
-              backgroundColor: 'white'
-            }}
-          >
+          <View style={styles.toggleContainer}>
             <Animated.View
-              style={{
-                height: 20,
-                width: 20,
-                marginRight: -2,
-                elevation: 5,
-                borderRadius: 10,
-                transform: [{ translateX }],
-                backgroundColor: this.state.toggle ? '#FFB300' : '#BDBDBD'
-              }}
+              style={[
+                styles.toggleCircle,
+                {
+                  transform: [{ translateX }],
+                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive
+                }
+              ]}
             />
           </View>
         </TouchableOpacity>
+        <View style={[styles.toggleBox, { top: '88%', left: '5.5%' }]}>
+          <Text style={styles.toggleText}>Update</Text>
+        </View>
       </View>
     );
   }

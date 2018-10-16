@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import {
+  View,
+  Text,
+  Animated,
+  Easing,
+  TouchableOpacity,
+  StatusBar,
+  AsyncStorage
+} from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 import { FloatingAction } from 'react-native-floating-action';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-/* import {
-  AdMobBanner,
-  AdMobInterstitial,
-  PublisherBanner,
-  AdMobRewarded
-} from 'react-native-admob'; */
+import _ from 'lodash';
 import { Colors, Metrics } from '../Themes';
 import TopTabScreen from './TopTabScreen';
 
 // Styles
-//import styles from './Styles/MainScreenStyle';
+import styles from './Styles/MainScreenStyle';
 
 const actions = [
   {
@@ -25,6 +28,10 @@ const actions = [
   }
 ];
 
+const TopTabScreenA = new Animated.createAnimatedComponent(TopTabScreen);
+const cardAnim = new Animated.Value(0);
+const tabAnim = new Animated.Value(0);
+
 class MainScreen extends Component {
   constructor(props) {
     super(props);
@@ -35,16 +42,80 @@ class MainScreen extends Component {
       paraleli: props.navigation.state.params.paraleli,
       email: props.navigation.state.params.email,
       pedagogu: props.navigation.state.params.pedagogu,
-      changeCard: true
+      changeCard: true,
+      emptyRender: true,
+      animateOthers: false
     };
 
     this.orderedCards = this.orderedCards.bind(this);
-    this.getDay = this.getDay.bind(this);
+    this.animate = this.animate.bind(this);
+    this.animateT = this.animateT.bind(this);
+    this.storeItem = this.storeItem.bind(this);
+    this.retrieveItem = this.retrieveItem.bind(this);
   }
 
-  getDay() {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    return days[new Date().getDay()];
+  componentDidMount() {
+    this.retrieveItem('cardH').then(value => {
+      if (value !== null) {
+        this.setState({ changeCard: JSON.parse(value) });
+      }
+    });
+    if (!_.isEmpty(this.orderedCards())) {
+      setTimeout(() => {
+        this.setState({ emptyRender: false }, () => {
+          this.animate(true);
+          this.animateT();
+        });
+      }, 0.01);
+    }
+  }
+
+  animate(fade) {
+    Animated.timing(cardAnim, {
+      toValue: fade ? 1 : 0,
+      duration: 250,
+      useNativeDriver: true
+    }).start(() => {
+      if (!fade) {
+        this.setState({
+          changeCard: !this.state.changeCard
+        });
+        setTimeout(() => {
+          this.animate(true);
+        }, 200);
+      }
+    });
+  }
+
+  animateT() {
+    Animated.timing(tabAnim, {
+      toValue: 1,
+      duration: 110,
+      easing: Easing.ease,
+      useNativeDriver: true
+    }).start();
+  }
+
+  async storeItem(key, value) {
+    const { navigation } = this.props;
+    try {
+      await AsyncStorage.setItem(key, value);
+      navigation.goBack();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async retrieveItem(key) {
+    try {
+      const value = await AsyncStorage.getItem(key);
+      if (value !== null) {
+        return value;
+      }
+      return null;
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   orderedCards() {
@@ -72,63 +143,154 @@ class MainScreen extends Component {
   }
 
   render() {
-    //console.log(this.orderedCards());
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-        <TopTabs
-          style={{ flex: 1 }}
-          screenProps={{
-            orari: this.orderedCards(),
-            pedagogu: this.state.pedagogu,
-            changeCard: this.state.changeCard
+        <StatusBar hidden />
+        <TouchableOpacity
+          style={[styles.backButton, { left: _.isEmpty(this.orderedCards()) ? '87%' : '82%' }]}
+          onPress={() => {
+            this.storeItem('cardH', JSON.stringify(this.state.changeCard));
           }}
-        />
-        <FloatingAction
-          ref={ref => {
-            this.floatingAction = ref;
-          }}
-          actions={actions}
-          color={Colors.actionButton}
-          distanceToEdge={55}
-          onPressItem={name => {
-            if (name === 'bt_card') {
-              this.floatingAction.animateButton();
-              setTimeout(() => {
-                this.setState({
-                  changeCard: !this.state.changeCard
-                });
-              }, 0.01);
-            }
-          }}
-        />
+        >
+          <Icon name="close" size={18} color={_.isEmpty(this.orderedCards()) ? 'black' : 'white'} />
+        </TouchableOpacity>
+        {_.isEmpty(this.orderedCards()) ? (
+          <View style={styles.errorBox}>
+            <Text style={styles.notFoundText}>NOT FOUND</Text>
+            <View style={styles.messageBox}>
+              <Text style={styles.messageText}>Please enter a correct configuration!</Text>
+            </View>
+          </View>
+        ) : (
+          <View style={{ flex: 1 }}>
+            {!this.state.emptyRender ? (
+              <TopTabs
+                animateOthers={this.state.animateOthers}
+                style={{ flex: 1 }}
+                screenProps={{
+                  orari: this.orderedCards(),
+                  pedagogu: this.state.pedagogu,
+                  changeCard: this.state.changeCard
+                }}
+              />
+            ) : null}
+            <FloatingAction
+              ref={ref => {
+                this.floatingAction = ref;
+              }}
+              actions={actions}
+              color={Colors.actionButton}
+              distanceToEdge={40}
+              onPressItem={name => {
+                if (name === 'bt_card') {
+                  this.floatingAction.animateButton();
+                  setTimeout(() => {
+                    this.animate(false);
+                  }, 0.01);
+                }
+              }}
+            />
+          </View>
+        )}
       </View>
     );
   }
 }
 
+const fadeTab = tabAnim.interpolate({
+  inputRange: [0, 1],
+  outputRange: [0, 1],
+  extrapolate: 'clamp'
+});
+
+const opacity = cardAnim.interpolate({
+  inputRange: [0, 1],
+  outputRange: [0, 1],
+  extrapolate: 'clamp'
+});
+
+const getDay = () => {
+  if (new Date().toLocaleString('en-us', { weekday: 'narrow' }).substring(0, 1) === 'S') {
+    return 'M';
+  } else if (new Date().toLocaleString('en-us', { weekday: 'short' }).substring(0, 2) === 'Th') {
+    return 'TH';
+  }
+  return new Date().toLocaleString('en-us', { weekday: 'narrow' }).substring(0, 1);
+};
+
 const TopTabs = createMaterialTopTabNavigator(
   {
     M: {
-      screen: props => <TopTabScreen {...props} dita="1" />
+      screen: props => (
+        <TopTabScreenA
+          {...props}
+          dita="1"
+          style={{
+            flex: 1,
+            backgroundColor: '#f9f9f9',
+            opacity
+          }}
+        />
+      )
     },
     T: {
-      screen: props => <TopTabScreen {...props} dita="2" />
+      screen: props => (
+        <TopTabScreenA
+          {...props}
+          dita="2"
+          style={{
+            flex: 1,
+            backgroundColor: '#f9f9f9',
+            opacity
+          }}
+        />
+      )
     },
     W: {
-      screen: props => <TopTabScreen {...props} dita="3" />
+      screen: props => (
+        <TopTabScreenA
+          {...props}
+          dita="3"
+          style={{
+            flex: 1,
+            backgroundColor: '#f9f9f9',
+            opacity
+          }}
+        />
+      )
     },
     TH: {
-      screen: props => <TopTabScreen {...props} dita="4" />
+      screen: props => (
+        <TopTabScreenA
+          {...props}
+          dita="4"
+          style={{
+            flex: 1,
+            backgroundColor: '#f9f9f9',
+            opacity
+          }}
+        />
+      )
     },
     F: {
-      screen: props => <TopTabScreen {...props} dita="5" />
+      screen: props => (
+        <TopTabScreenA
+          {...props}
+          dita="5"
+          style={{
+            flex: 1,
+            backgroundColor: '#f9f9f9',
+            opacity
+          }}
+        />
+      )
     }
   },
   {
-    initialRouteName: 'M',
+    initialRouteName: getDay(),
     tabBarPosition: 'top',
-    swipeEnabled: true,
-    lazyLoad: true,
+    lazy: true,
+    optimizationsEnabled: true,
     initialLayout: {
       height: 0,
       width: Metrics.screenWidth
@@ -141,7 +303,8 @@ const TopTabs = createMaterialTopTabNavigator(
       },
       style: {
         backgroundColor: Colors.background,
-        paddingTop: 25
+        paddingTop: Metrics.screenHeight * 0.052,
+        opacity: fadeTab
       },
       tabStyle: {
         width: Metrics.screenWidth / 5

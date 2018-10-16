@@ -76,45 +76,40 @@ class TabScreen extends Component {
               flex: 1,
               backgroundColor: '#f9f9f9'
             }}
-            contentContainerStyle={{
-              justifyContent: 'center',
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              paddingTop: '2%',
-              paddingBottom: '26%'
-            }}
+            contentContainerStyle={styles.scrollBox}
           >
             {pedagogu === null
               ? orderedOrari.map((prop, index) => {
                   return (
                     <View
-                      style={{
-                        alignItems: changeCard ? 'flex-end' : 'center',
-                        margin: 4,
-                        backgroundColor: 'white',
-                        borderRadius: 5,
-                        elevation: 2,
-                        height: changeCard
-                          ? Metrics.screenHeight * 0.22
-                          : Metrics.screenHeight * 0.3,
-                        width: changeCard ? Metrics.screenWidth * 0.88 : Metrics.screenWidth * 0.47
-                      }}
+                      style={[
+                        styles.card,
+                        {
+                          alignItems: changeCard ? 'flex-end' : 'center',
+                          height: changeCard
+                            ? Metrics.screenHeight * 0.22
+                            : Metrics.screenHeight * 0.3,
+                          width: changeCard
+                            ? Metrics.screenWidth * 0.88
+                            : Metrics.screenWidth * 0.47
+                        }
+                      ]}
                       key={index}
                     >
                       <View
-                        style={{
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          height: changeCard
-                            ? Metrics.screenHeight * 0.22
-                            : Metrics.screenHeight * 0.3 - Metrics.screenHeight * 0.3 * 0.18,
-                          width: changeCard
-                            ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
-                            : Metrics.screenWidth * 0.47,
-                          borderTopLeftRadius: 5,
-                          borderTopRightRadius: changeCard ? 0 : 5,
-                          borderBottomLeftRadius: changeCard ? 5 : 0
-                        }}
+                        style={[
+                          styles.cardTextBox,
+                          {
+                            height: changeCard
+                              ? Metrics.screenHeight * 0.22
+                              : Metrics.screenHeight * 0.3 - Metrics.screenHeight * 0.3 * 0.18,
+                            width: changeCard
+                              ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
+                              : Metrics.screenWidth * 0.47,
+                            borderTopRightRadius: changeCard ? 0 : 5,
+                            borderBottomLeftRadius: changeCard ? 5 : 0
+                          }
+                        ]}
                       >
                         <Text
                           style={[
@@ -166,9 +161,7 @@ class TabScreen extends Component {
                                 position: 'absolute',
                                 top: 0,
                                 right:
-                                  Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16,
-                                alignItems: 'center',
-                                justifyContent: 'center'
+                                  Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
                               }
                             : null
                         ]}
@@ -181,32 +174,34 @@ class TabScreen extends Component {
               : orderedOrari.map((prop, index) => {
                   return (
                     <View
-                      style={{
-                        alignItems: changeCard ? 'flex-end' : 'center',
-                        margin: 4,
-                        backgroundColor: 'white',
-                        borderRadius: 5,
-                        elevation: 2,
-                        height: changeCard
-                          ? Metrics.screenHeight * 0.38
-                          : Metrics.screenHeight * 0.48,
-                        width: changeCard ? Metrics.screenWidth * 0.88 : Metrics.screenWidth * 0.47
-                      }}
+                      style={[
+                        styles.card2,
+                        {
+                          alignItems: changeCard ? 'flex-end' : 'center',
+                          height: changeCard
+                            ? Metrics.screenHeight * 0.38
+                            : Metrics.screenHeight * 0.48,
+                          width: changeCard
+                            ? Metrics.screenWidth * 0.88
+                            : Metrics.screenWidth * 0.47
+                        }
+                      ]}
                       key={index}
                     >
                       <View
-                        style={{
-                          justifyContent: 'center',
-                          height: changeCard
-                            ? Metrics.screenHeight * 0.38
-                            : Metrics.screenHeight * 0.48 - Metrics.screenHeight * 0.48 * 0.12,
-                          width: changeCard
-                            ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
-                            : Metrics.screenWidth * 0.47,
-                          borderTopLeftRadius: 5,
-                          borderTopRightRadius: changeCard ? 0 : 5,
-                          borderBottomLeftRadius: changeCard ? 5 : 0
-                        }}
+                        style={[
+                          styles.card2TextBox,
+                          {
+                            height: changeCard
+                              ? Metrics.screenHeight * 0.38
+                              : Metrics.screenHeight * 0.48 - Metrics.screenHeight * 0.48 * 0.12,
+                            width: changeCard
+                              ? Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
+                              : Metrics.screenWidth * 0.47,
+                            borderTopRightRadius: changeCard ? 0 : 5,
+                            borderBottomLeftRadius: changeCard ? 5 : 0
+                          }
+                        ]}
                       >
                         <Text
                           style={[

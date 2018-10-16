@@ -58,6 +58,7 @@ class LaunchScreen extends Component {
   }
 
   componentDidMount() {
+    // console.log(this.state.orari);
     const { student } = this.state;
     if (student) {
       this.retrieveItem('infoS').then(info1 => {
@@ -70,7 +71,7 @@ class LaunchScreen extends Component {
             toggle: true,
             activated: true
           });
-          console.log(info1);
+          // console.log(info1);
         }
       });
     } else {
@@ -85,10 +86,10 @@ class LaunchScreen extends Component {
               activated: true
             },
             () => {
-              console.log(this.state.email);
+              //console.log(this.state.email);
             }
           );
-          console.log(info1);
+          // console.log(info1);
         }
       });
     }
@@ -99,14 +100,14 @@ class LaunchScreen extends Component {
     this.keyboardDidHideListener.remove();
     const { dega, viti, paraleli, toggle, student, pedagogu, email } = this.state;
     if (toggle) {
-      console.log('stored');
+      //console.log('stored');
       if (student) {
         this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
       } else {
         this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
       }
     } else {
-      console.log('deleted');
+      // console.log('deleted');
       this.deleteItem(student ? 'infoS' : 'infoP');
     }
   }
@@ -187,7 +188,7 @@ class LaunchScreen extends Component {
     if (picker === 'viti') {
       const initialArr = [{ id: 1, text: '1' }, { id: 2, text: '2' }, { id: 3, text: '3' }];
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.vitiBox}>
           {initialArr.map(prop => {
             return (
               <TouchableOpacity
@@ -217,16 +218,7 @@ class LaunchScreen extends Component {
         { id: 6, text: 'C2' }
       ];
       return (
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            marginTop: '50%'
-          }}
-        >
+        <View style={styles.paraleliBox}>
           {initialArr.map(prop => {
             return (
               <TouchableOpacity
@@ -252,11 +244,7 @@ class LaunchScreen extends Component {
 
     if (picker === 'dega') {
       return (
-        <ScrollView
-          style={{
-            flex: 1
-          }}
-        >
+        <ScrollView style={styles.degaBox} keyboardShouldPersistTaps="always">
           {this.state.deget.map(prop => {
             if (this.state.text !== '') {
               return prop.dega[0].toUpperCase().includes(this.state.text.toUpperCase()) ? (
@@ -271,7 +259,7 @@ class LaunchScreen extends Component {
                     }, 100);
                     this.animate(!this.state.modalVisible, true);
                   }}
-                  style={{ flex: 1 }}
+                  style={styles.degaItem}
                   key={prop.dega}
                 >
                   <Text style={styles.degetText}>{prop.dega}</Text>
@@ -290,7 +278,7 @@ class LaunchScreen extends Component {
                   }, 100);
                   this.animate(!this.state.modalVisible, true);
                 }}
-                style={{ flex: 1 }}
+                style={styles.degaItem}
                 key={prop.dega}
               >
                 <Text style={styles.degetText}>{prop.dega}</Text>
@@ -302,11 +290,7 @@ class LaunchScreen extends Component {
     }
     if (picker === 'pedagogu') {
       return (
-        <ScrollView
-          style={{
-            flex: 1
-          }}
-        >
+        <ScrollView style={styles.degaBox}>
           {this.state.pedagoget.map(prop => {
             if (this.state.text !== '') {
               return prop.pedagog[0].toUpperCase().substring(0, this.state.text.length) ===
@@ -323,7 +307,7 @@ class LaunchScreen extends Component {
                     }, 100);
                     this.animate(!this.state.modalVisible, true);
                   }}
-                  style={{ flex: 1 }}
+                  style={styles.degaItem}
                   key={prop.dega}
                 >
                   <Text style={styles.degetText}>{prop.pedagog[0].toUpperCase()}</Text>
@@ -333,7 +317,7 @@ class LaunchScreen extends Component {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  console.log(prop.email[0]);
+                  //console.log(prop.email[0]);
                   setTimeout(() => {
                     this.setState({
                       modalVisible: !this.state.modalVisible,
@@ -343,7 +327,7 @@ class LaunchScreen extends Component {
                   }, 100);
                   this.animate(!this.state.modalVisible, true);
                 }}
-                style={{ flex: 1 }}
+                style={styles.degaItem}
                 key={prop.email[0]}
               >
                 <Text style={styles.degetText}>{prop.pedagog[0].toUpperCase()}</Text>
@@ -354,11 +338,7 @@ class LaunchScreen extends Component {
       );
     }
     return (
-      <ScrollView
-        style={{
-          flex: 1
-        }}
-      />
+      <ScrollView style={styles.degaBox} />
       /*<FlatList
         data={this.state.deget}
         extraData={this.state}
@@ -405,16 +385,16 @@ class LaunchScreen extends Component {
     });
     const translateToggle = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: !this.state.activated ? [-34, 0] : [0, -34],
+      outputRange: !this.state.activated ? [-30, 0] : [0, -30],
       extrapolate: 'clamp'
     });
 
     const { navigation } = this.props;
-    const { dega, paraleli, viti, toggle } = this.state;
+    const { dega, paraleli, viti, toggle, email, student, pedagogu } = this.state;
 
     return (
       <View style={styles.mainContainer}>
-        <StatusBar trasparent />
+        <StatusBar hidden />
         <LinearGradient
           colors={[Colors.gradient1, Colors.gradient2]}
           style={styles.backgroundTheme}
@@ -495,6 +475,18 @@ class LaunchScreen extends Component {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
+            NativeModules.NavigationBarAndroid.hide();
+            if (toggle) {
+              //console.log('stored');
+              if (student) {
+                this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
+              } else {
+                this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
+              }
+            } else {
+              //console.log('deleted');
+              this.deleteItem(student ? 'infoS' : 'infoP');
+            }
             navigation.navigate('MainScreen', {
               orari: this.state.orari,
               dega: this.state.dega,
@@ -523,13 +515,18 @@ class LaunchScreen extends Component {
               {this.state.loadContent ? (
                 this.show(this.state.activePicker)
               ) : (
-                <Spinner style={styles.spinner} size={50} type="ThreeBounce" color="#ed8063" />
+                <Spinner
+                  style={styles.spinner}
+                  size={50}
+                  type="ThreeBounce"
+                  color={Colors.actionButton}
+                />
               )}
               <Animated.View style={[styles.modalTitleContainer, { transform: [{ translateY }] }]}>
                 {this.state.activePicker === 'dega' || this.state.activePicker === 'pedagogu' ? (
                   <TextInput
                     ref={component => (this.textInput = component)}
-                    maxLength={15}
+                    maxLength={50}
                     placeholder="Search Name"
                     placeholderTextColor="white"
                     underlineColorAndroid="rgba(255,255,255, 0.0)"
@@ -557,41 +554,23 @@ class LaunchScreen extends Component {
             }, 0.01);
             this.animateToggle(this.state.activated ? this.state.toggle : !this.state.toggle);
           }}
-          style={{
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 35,
-            width: 80,
-            borderRadius: 30,
-            backgroundColor: 'rgba(255,255,255,0.2)',
-            top: Metrics.screenHeight * 0.91,
-            left: 25
-          }}
+          style={styles.toggleBox}
         >
-          <View
-            style={{
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-              height: 10,
-              width: 50,
-              borderRadius: 30,
-              backgroundColor: 'white'
-            }}
-          >
+          <View style={styles.toggleContainer}>
             <Animated.View
-              style={{
-                height: 20,
-                width: 20,
-                marginRight: -2,
-                borderRadius: 10,
-                elevation: 5,
-                backgroundColor: this.state.toggle ? '#FFB300' : '#BDBDBD',
-                transform: [{ translateX: translateToggle }]
-              }}
+              style={[
+                styles.toggleCircle,
+                {
+                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive,
+                  transform: [{ translateX: translateToggle }]
+                }
+              ]}
             />
           </View>
         </TouchableOpacity>
+        <View style={[styles.toggleBox, { top: '88%', left: '4.5%' }]}>
+          <Text style={styles.toggleText}>Save</Text>
+        </View>
       </View>
     );
   }

@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
-import { View, StatusBar, Text } from 'react-native';
-import Spinner from 'react-native-spinkit';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
+import { View } from 'react-native';
 import TabScreen from './TabScreen';
-
-// Styles
-//import styles from './Styles/TopTabScreenStyle';
 
 export default class TopTabScreen extends Component {
   constructor(props) {
@@ -31,8 +25,7 @@ export default class TopTabScreen extends Component {
   render() {
     const { screenProps } = this.props;
     return (
-      <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-        <StatusBar trasparent />
+      <View style={this.props.style}>
         <TabScreen
           pedagogu={screenProps.pedagogu}
           style={{ flex: 1 }}

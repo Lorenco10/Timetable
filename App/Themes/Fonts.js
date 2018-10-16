@@ -54,9 +54,6 @@ const style = {
   main: {
     fontFamily: 'Roboto',
     fontSize: 16
-  },
-  megrim: {
-    fontFamily: 'telefono'
   }
 };
 
