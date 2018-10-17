@@ -1,4 +1,4 @@
-package com.timetable.navbar;
+package com.akai.timetable.navbar;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;

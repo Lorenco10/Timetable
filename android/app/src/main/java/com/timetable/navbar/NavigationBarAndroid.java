@@ -1,4 +1,4 @@
-package com.timetable.navbar;
+package com.akai.timetable.navbar;
 
 import android.app.Activity;
 import android.view.View;

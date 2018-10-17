@@ -20,7 +20,6 @@ import styles from './Styles/MainScreenStyle';
 
 const actions = [
   {
-    //text: 'Card Style',
     color: Colors.actionButton,
     icon: <Icon name="swap-vert" size={20} color="white" />,
     name: 'bt_card',
@@ -102,7 +101,7 @@ class MainScreen extends Component {
       await AsyncStorage.setItem(key, value);
       navigation.goBack();
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 
@@ -114,7 +113,7 @@ class MainScreen extends Component {
       }
       return null;
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 
@@ -295,7 +294,7 @@ const TopTabs = createMaterialTopTabNavigator(
       height: 0,
       width: Metrics.screenWidth
     },
-    animationEnabled: true,
+    //animationEnabled: true,
     tabBarOptions: {
       scrollEnabled: true,
       indicatorStyle: {

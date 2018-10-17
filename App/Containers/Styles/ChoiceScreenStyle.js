@@ -24,12 +24,15 @@ export default StyleSheet.create({
     textAlign: 'center'
   },
   textContainer: {
-    width: Metrics.screenWidth,
-    height: Metrics.screenHeight * 0.4,
+    width: Metrics.screenHeight * 0.3,
+    height: Metrics.screenHeight * 0.3,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: Metrics.screenHeight * 0.1,
-    marginRight: Metrics.screenWidth * 0.1,
+    borderWidth: 1.7,
+    borderRadius: (Metrics.screenHeight * 0.3) / 2,
+    borderColor: 'white',
+    marginTop: Metrics.screenHeight * 0.14,
+    paddingRight: Metrics.screenHeight * 0.3 * 0.22,
     flexDirection: 'row'
   },
   logo: {

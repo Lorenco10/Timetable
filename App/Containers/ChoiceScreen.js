@@ -8,7 +8,8 @@ import {
   Animated,
   AsyncStorage,
   Easing,
-  Text
+  Text,
+  NativeModules
 } from 'react-native';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
@@ -49,6 +50,7 @@ class ChoiceScreen extends Component {
   }
 
   componentDidMount() {
+    NativeModules.NavigationBarAndroid.hide();
     SplashScreen.hide();
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
 
@@ -75,7 +77,6 @@ class ChoiceScreen extends Component {
     try {
       const value = await AsyncStorage.getItem(key);
       const value2 = await AsyncStorage.getItem(key2);
-      // this.setState({ [`${key}`]: JSON.parse(value) });
       if (value !== null && value2 !== null) {
         return { val1: JSON.parse(value), val2: JSON.parse(value2) };
       }
@@ -182,8 +183,7 @@ class ChoiceScreen extends Component {
     Animated.timing(this.toggleAnim, {
       toValue: move ? 1 : 0,
       duration: 200,
-      easing: Easing.out(Easing.back(0.01)),
-      useNativeDriver: true
+      easing: Easing.out(Easing.back(0.01))
     }).start();
   }
 
@@ -230,7 +230,7 @@ class ChoiceScreen extends Component {
     });
     const translateX = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [-30, 0],
+      outputRange: ['60%', '-1%'],
       extrapolate: 'clamp'
     });
 
@@ -349,14 +349,14 @@ class ChoiceScreen extends Component {
               style={[
                 styles.toggleCircle,
                 {
-                  transform: [{ translateX }],
+                  marginRight: translateX,
                   backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive
                 }
               ]}
             />
           </View>
         </TouchableOpacity>
-        <View style={[styles.toggleBox, { top: '88%', left: '5.5%' }]}>
+        <View style={[styles.toggleBox, { top: Metrics.screenHeight * 0.946, left: '5.5%' }]}>
           <Text style={styles.toggleText}>Update</Text>
         </View>
       </View>

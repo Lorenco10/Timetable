@@ -1,4 +1,4 @@
-package com.timetable;
+package com.akai.timetable;
 
 import android.app.Application;
 
@@ -12,7 +12,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.timetable.navbar.NavigationBarAndroidPackage;
+import com.akai.timetable.navbar.NavigationBarAndroidPackage;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.timetable;
+package com.akai.timetable;
 
 import android.app.Activity;
 import android.view.View;

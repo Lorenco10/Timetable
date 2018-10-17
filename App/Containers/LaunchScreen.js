@@ -20,6 +20,7 @@ import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/LaunchScreenStyles';
+import { Transform } from 'stream';
 
 class LaunchScreen extends Component {
   constructor(props) {
@@ -33,6 +34,8 @@ class LaunchScreen extends Component {
       activePicker: '',
       text: '',
       toggle: false,
+      keybardHeight: 0,
+      moveScrollView: false,
       activated: false,
       loadContent: false,
       pedagogu: 'PEDAGOGU',
@@ -48,8 +51,6 @@ class LaunchScreen extends Component {
 
     this.show = this.show.bind(this);
     this.animate = this.animate.bind(this);
-    this.animateS = this.animateS.bind(this);
-    this.keyboardDidHide = this.keyboardDidHide.bind(this);
     this.onChange = this.onChange.bind(this);
     this.animateToggle = this.animateToggle.bind(this);
     this.storeItem = this.storeItem.bind(this);
@@ -58,7 +59,6 @@ class LaunchScreen extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.state.orari);
     const { student } = this.state;
     if (student) {
       this.retrieveItem('infoS').then(info1 => {
@@ -71,7 +71,6 @@ class LaunchScreen extends Component {
             toggle: true,
             activated: true
           });
-          // console.log(info1);
         }
       });
     } else {
@@ -86,28 +85,22 @@ class LaunchScreen extends Component {
               activated: true
             },
             () => {
-              //console.log(this.state.email);
             }
           );
-          // console.log(info1);
         }
       });
     }
-    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
   }
 
   componentWillUnmount() {
-    this.keyboardDidHideListener.remove();
     const { dega, viti, paraleli, toggle, student, pedagogu, email } = this.state;
     if (toggle) {
-      //console.log('stored');
       if (student) {
         this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
       } else {
         this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
       }
     } else {
-      // console.log('deleted');
       this.deleteItem(student ? 'infoS' : 'infoP');
     }
   }
@@ -117,16 +110,11 @@ class LaunchScreen extends Component {
     this.setState({ text: value });
   }
 
-  keyboardDidHide() {
-    this.animateS(false);
-    // NativeModules.NavigationBarAndroid.hide();
-  }
-
   async storeItem(key, value) {
     try {
       await AsyncStorage.setItem(key, value);
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 
@@ -135,7 +123,7 @@ class LaunchScreen extends Component {
       await AsyncStorage.removeItem(key);
       return true;
     } catch (error) {
-      console.log(error.message);
+     // console.log(error.message);
     }
   }
 
@@ -146,7 +134,7 @@ class LaunchScreen extends Component {
         return value;
       }
     } catch (error) {
-      console.log(error.message);
+     // console.log(error.message);
     }
   }
 
@@ -166,21 +154,11 @@ class LaunchScreen extends Component {
     );
   }
 
-  animateS(open) {
-    Animated.timing(this.searchAnim, {
-      toValue: open ? 1 : 0,
-      duration: 500,
-      easing: Easing.out(Easing.back(0.01)),
-      useNativeDriver: true
-    }).start();
-  }
-
   animateToggle(move) {
     Animated.timing(this.toggleAnim, {
       toValue: move ? 1 : 0,
       duration: 200,
       easing: Easing.out(Easing.back(0.01)),
-      useNativeDriver: true
     }).start();
   }
 
@@ -244,7 +222,7 @@ class LaunchScreen extends Component {
 
     if (picker === 'dega') {
       return (
-        <ScrollView style={styles.degaBox} keyboardShouldPersistTaps="always">
+        <ScrollView style={[styles.degaBox, { marginTop: '18%' }]}>
           {this.state.deget.map(prop => {
             if (this.state.text !== '') {
               return prop.dega[0].toUpperCase().includes(this.state.text.toUpperCase()) ? (
@@ -290,7 +268,7 @@ class LaunchScreen extends Component {
     }
     if (picker === 'pedagogu') {
       return (
-        <ScrollView style={styles.degaBox}>
+        <ScrollView style={[styles.degaBox, { marginTop: '18%' }]}>
           {this.state.pedagoget.map(prop => {
             if (this.state.text !== '') {
               return prop.pedagog[0].toUpperCase().substring(0, this.state.text.length) ===
@@ -317,7 +295,6 @@ class LaunchScreen extends Component {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  //console.log(prop.email[0]);
                   setTimeout(() => {
                     this.setState({
                       modalVisible: !this.state.modalVisible,
@@ -339,33 +316,8 @@ class LaunchScreen extends Component {
     }
     return (
       <ScrollView style={styles.degaBox} />
-      /*<FlatList
-        data={this.state.deget}
-        extraData={this.state}
-        keyExtractor={this.keyExtractor}
-        renderItem={this.renderItem}
-        initialNumToRender={30}
-      />*/
     );
   }
-
-  /*   keyExtractor(item, index) {
-    return index.toString();
-  }
-
-  renderItem({ item, index }) {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          this.setState({ dega: item.dega });
-          this.closeAnim();
-        }}
-        style={{ flex: 1, flexDirection: 'row', marginTop: index === 0 ? 15 : null }}
-      >
-        <Text style={styles.degetText}>{item.dega}</Text>
-      </TouchableOpacity>
-    );
-  } */
 
   render() {
     const scaleModal = this.modalAnim.interpolate({
@@ -378,19 +330,14 @@ class LaunchScreen extends Component {
       outputRange: [0, 1],
       extrapolate: 'clamp'
     });
-    const translateY = this.searchAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -Metrics.screenHeight * 0.37],
-      extrapolate: 'clamp'
-    });
     const translateToggle = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: !this.state.activated ? [-30, 0] : [0, -30],
+      outputRange: !this.state.activated ? ['60%', '-1%'] : ['-1%', '60%'],
       extrapolate: 'clamp'
     });
 
     const { navigation } = this.props;
-    const { dega, paraleli, viti, toggle, email, student, pedagogu } = this.state;
+    const { dega, paraleli, viti, toggle, email, student, pedagogu, activePicker } = this.state;
 
     return (
       <View style={styles.mainContainer}>
@@ -477,14 +424,12 @@ class LaunchScreen extends Component {
           onPress={() => {
             NativeModules.NavigationBarAndroid.hide();
             if (toggle) {
-              //console.log('stored');
               if (student) {
                 this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
               } else {
                 this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
               }
             } else {
-              //console.log('deleted');
               this.deleteItem(student ? 'infoS' : 'infoP');
             }
             navigation.navigate('MainScreen', {
@@ -512,6 +457,36 @@ class LaunchScreen extends Component {
               activeOpacity={0.5}
             />
             <Animated.View style={[styles.modal, { transform: [{ scale: scaleModal }] }]}>
+              <Animated.View
+                style={[
+                  styles.modalTitleContainer,
+                  {
+                    top: activePicker === 'dega' || activePicker === 'pedagogu' ? '0%' : '88%',
+                    borderBottomRightRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    borderTopRightRadius: Metrics.screenHeight * 0.005,
+                    borderTopLeftRadius: Metrics.screenHeight * 0.005
+                  }
+                ]}
+              >
+                {this.state.activePicker === 'dega' || this.state.activePicker === 'pedagogu' ? (
+                  <TextInput
+                    ref={component => (this.textInput = component)}
+                    maxLength={50}
+                    placeholder="Search Name"
+                    placeholderTextColor="white"
+                    underlineColorAndroid="rgba(255,255,255, 0.0)"
+                    style={styles.textInput}
+                    onChangeText={value => this.onChange(value)}
+                    onSubmitEditing={() => {
+                      Keyboard.dismiss();
+                      NativeModules.NavigationBarAndroid.hide();
+                    }}
+                  />
+                ) : (
+                  <Text style={styles.modalTitle}>Pick</Text>
+                )}
+              </Animated.View>
               {this.state.loadContent ? (
                 this.show(this.state.activePicker)
               ) : (
@@ -522,27 +497,6 @@ class LaunchScreen extends Component {
                   color={Colors.actionButton}
                 />
               )}
-              <Animated.View style={[styles.modalTitleContainer, { transform: [{ translateY }] }]}>
-                {this.state.activePicker === 'dega' || this.state.activePicker === 'pedagogu' ? (
-                  <TextInput
-                    ref={component => (this.textInput = component)}
-                    maxLength={50}
-                    placeholder="Search Name"
-                    placeholderTextColor="white"
-                    underlineColorAndroid="rgba(255,255,255, 0.0)"
-                    style={styles.textInput}
-                    onFocus={() => this.animateS(true)}
-                    onChangeText={value => this.onChange(value)}
-                    onSubmitEditing={() => {
-                      Keyboard.dismiss();
-                      this.animateS(false);
-                      // NativeModules.NavigationBarAndroid.hide();
-                    }}
-                  />
-                ) : (
-                  <Text style={styles.modalTitle}>Pick</Text>
-                )}
-              </Animated.View>
             </Animated.View>
           </Animated.View>
         ) : null}
@@ -562,13 +516,13 @@ class LaunchScreen extends Component {
                 styles.toggleCircle,
                 {
                   backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive,
-                  transform: [{ translateX: translateToggle }]
+                  marginRight: translateToggle
                 }
               ]}
             />
           </View>
         </TouchableOpacity>
-        <View style={[styles.toggleBox, { top: '88%', left: '4.5%' }]}>
+        <View style={[styles.toggleBox, { top: Metrics.screenHeight * 0.946, left: '4.5%' }]}>
           <Text style={styles.toggleText}>Save</Text>
         </View>
       </View>

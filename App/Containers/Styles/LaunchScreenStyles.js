@@ -115,11 +115,13 @@ export default StyleSheet.create({
     marginRight: Metrics.screenWidth / 2
   },
   modalTitleContainer: {
+    top: '88%',
+    position: 'absolute',
     backgroundColor: Colors.modalButton,
-    height: Metrics.navBarHeight,
+    height: '12%',
     width: '100%',
-    borderBottomRightRadius: Metrics.screenHeight * 0.003,
-    borderBottomLeftRadius: Metrics.screenHeight * 0.003,
+    borderBottomRightRadius: Metrics.screenHeight * 0.005,
+    borderBottomLeftRadius: Metrics.screenHeight * 0.005,
     alignItems: 'center',
     justifyContent: 'center'
   },

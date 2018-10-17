@@ -21,7 +21,7 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   notFoundText: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Roboto',
     color: 'red',
     textAlign: 'center',
