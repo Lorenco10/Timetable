@@ -37,7 +37,7 @@ export default StyleSheet.create({
   },
   logo: {
     position: 'absolute',
-    top: '10%',
+    top: '30%',
     alignSelf: 'center',
     height: Metrics.screenWidth * 0.3,
     width: Metrics.screenWidth * 0.3,

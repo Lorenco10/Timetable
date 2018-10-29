@@ -8,17 +8,15 @@ import {
   Animated,
   AsyncStorage,
   Easing,
-  Text,
-  NativeModules
+  Text
 } from 'react-native';
 import axios from 'axios';
 import SplashScreen from 'react-native-splash-screen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { parseString } from 'react-native-xml2js';
 import Animation from 'lottie-react-native';
-import { Images, Metrics, Colors } from '../Themes';
+import { Images, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/ChoiceScreenStyle';
@@ -188,7 +186,6 @@ class ChoiceScreen extends Component {
     Animated.timing(this.toggleAnim, {
       toValue: move ? 1 : 0,
       duration: 200,
-      useNativeDriver: true,
       easing: Easing.out(Easing.back(0.01))
     }).start();
   }
@@ -236,20 +233,14 @@ class ChoiceScreen extends Component {
     });
     const translateX = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: [-30, 0],
+      outputRange: ['60%', '-1%'],
       extrapolate: 'clamp'
     });
 
     return (
-      <View style={[styles.mainContainer, { backgroundColor: '#243B55' }]}>
+      <View style={styles.mainContainer}>
         <StatusBar translucent backgroundColor={Colors.transparent} />
-        <LinearGradient
-          colors={[Colors.gradient1, Colors.gradient2]}
-          style={styles.backgroundTheme}
-        />
-        <Transition shared="logo">
-          <Image source={Images.launch1} style={styles.logo} />
-        </Transition>
+        <LinearGradient colors={['#141E30', '#243B55']} style={styles.background} />
         <View style={styles.centered}>
           <Animation
             ref={animation => {
@@ -257,12 +248,14 @@ class ChoiceScreen extends Component {
             }}
             style={{
               position: 'absolute',
-              marginTop: '66%',
+              marginTop: '65%',
               width: 200,
               height: 200
             }}
+            speed={!this.state.toggle ? 5 : 1}
             source="loading_dots.json"
           />
+          <Image source={Images.launch1} style={styles.logo} />
           <TouchableOpacity
             activeOpacity={1}
             style={styles.textContainer}
@@ -300,91 +293,81 @@ class ChoiceScreen extends Component {
             <Text style={styles.alertText}>{this.state.errorMessage}</Text>
           </View>
         ) : null}
-        <Transition shared="next">
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => {
-              if (!this.state.student) {
-                this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
-                  if (pedagogetOrari !== null && !this.state.toggle) {
-                    this.animation.play();
-                    this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
-                  } else {
-                    this.setState(
-                      {
-                        loading: this.state.isConnected,
-                        showAlert: !this.state.isConnected,
-                        errorMessage: 'No Network Detected'
-                      },
-                      () => {
-                        if (this.state.isConnected) {
-                          this.animation.play();
-                          this.fetchData([], [], null, null);
-                        }
-                      }
-                    );
-                  }
-                });
-              } else {
-                this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
-                  if (degetOrari !== null && !this.state.toggle) {
-                    this.animation.play();
-                    this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
-                  } else {
-                    this.setState(
-                      {
-                        loading: this.state.isConnected,
-                        showAlert: !this.state.isConnected,
-                        errorMessage: 'No Network Detected'
-                      },
-                      () => {
-                        if (this.state.isConnected) {
-                          this.animation.play();
-                          this.fetchData(null, null, [], []);
-                        }
-                      }
-                    );
-                  }
-                });
-              }
-            }}
-          >
-            <Icon name="navigate-next" size={30} color="white" />
-          </TouchableOpacity>
-        </Transition>
-        <Transition shared="toggle">
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => {
-              setTimeout(() => {
-                this.setState({ toggle: !this.state.toggle });
-              }, 0.01);
-              this.animateToggle(!this.state.toggle);
-            }}
-            style={styles.toggleBox}
-          >
-            <View style={styles.toggleContainer}>
-              <Transition shared="circle" delay>
-                <Animated.View
-                  style={[
-                    styles.toggleCircle,
+        <TouchableOpacity
+          style={styles.nextButton}
+          onPress={() => {
+            if (!this.state.student) {
+              this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
+                if (pedagogetOrari !== null && !this.state.toggle) {
+                  this.animation.play();
+                  this.fetchData([], [], pedagogetOrari.val1, pedagogetOrari.val2);
+                } else {
+                  this.setState(
                     {
-                      transform: [{ translateX }],
-                      backgroundColor: this.state.toggle
-                        ? Colors.toggleActive
-                        : Colors.togglePassive
+                      loading: this.state.isConnected,
+                      showAlert: !this.state.isConnected,
+                      errorMessage: 'No Network Detected'
+                    },
+                    () => {
+                      if (this.state.isConnected) {
+                        this.animation.play();
+                        this.fetchData([], [], null, null);
+                      }
                     }
-                  ]}
-                />
-              </Transition>
-            </View>
-          </TouchableOpacity>
-        </Transition>
-        <Transition shared="text">
-          <View style={[styles.toggleBox, { top: '93.2%', left: '5.1%' }]}>
-            <Text style={styles.toggleText}>Update</Text>
+                  );
+                }
+              });
+            } else {
+              this.retrieveItem('orariStudent', 'deget').then(degetOrari => {
+                if (degetOrari !== null && !this.state.toggle) {
+                  this.animation.play();
+                  this.fetchData(degetOrari.val1, degetOrari.val2, [], []);
+                } else {
+                  this.setState(
+                    {
+                      loading: this.state.isConnected,
+                      showAlert: !this.state.isConnected,
+                      errorMessage: 'No Network Detected'
+                    },
+                    () => {
+                      if (this.state.isConnected) {
+                        this.animation.play();
+                        this.fetchData(null, null, [], []);
+                      }
+                    }
+                  );
+                }
+              });
+            }
+          }}
+        >
+          <Icon name="navigate-next" size={30} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            setTimeout(() => {
+              this.setState({ toggle: !this.state.toggle });
+            }, 0.01);
+            this.animateToggle(!this.state.toggle);
+          }}
+          style={styles.toggleBox}
+        >
+          <View style={styles.toggleContainer}>
+            <Animated.View
+              style={[
+                styles.toggleCircle,
+                {
+                  marginRight: translateX,
+                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive
+                }
+              ]}
+            />
           </View>
-        </Transition>
+        </TouchableOpacity>
+        <View style={[styles.toggleBox, { top: '93.2%', left: '5.1%' }]}>
+          <Text style={styles.toggleText}>Update</Text>
+        </View>
       </View>
     );
   }

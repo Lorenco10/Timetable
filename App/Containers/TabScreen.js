@@ -177,8 +177,8 @@ class TabScreen extends Component {
                         style={[
                           styles.modalTitleContainer,
                           {
-                            height: '7%',
-                            width: '3%',
+                            height: '5%',
+                            width: '5%',
                             borderBottomLeftRadius: 5,
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
@@ -314,14 +314,14 @@ class TabScreen extends Component {
                         style={[
                           styles.modalTitleContainer,
                           {
-                            height: '5%',
-                            width: '3.3%',
+                            height: '3%',
+                            width: '5%',
                             borderBottomLeftRadius: 5,
                             borderTopLeftRadius: 5,
                             borderTopRightRadius: 5,
                             borderBottomRightRadius: 5,
                             position: 'absolute',
-                            top: '2%',
+                            top: '3%',
                             left: '3%',
                             opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
                             backgroundColor: Colors.actionButton

@@ -13,7 +13,7 @@ export default StyleSheet.create({
     height: Metrics.screenWidth * 0.3,
     width: Metrics.screenWidth * 0.3,
     resizeMode: 'contain',
-    transform: [{ rotate: '180deg' }]
+    transform: [{ rotate: '0deg' }]
   },
   centered: {
     alignItems: 'center'
