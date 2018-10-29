@@ -6,6 +6,7 @@ import com.facebook.react.ReactApplication;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.react.rnspinkit.RNSpinkitPackage;
+import com.airbnb.android.react.lottie.LottiePackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.facebook.react.ReactNativeHost;
@@ -34,7 +35,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNSpinkitPackage(),
             new VectorIconsPackage(),
             new ReactNativeConfigPackage(),
-            new NavigationBarAndroidPackage()
+            new NavigationBarAndroidPackage(),
+            new LottiePackage()
       );
     }
 

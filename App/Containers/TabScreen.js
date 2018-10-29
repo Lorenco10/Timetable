@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, NativeModules } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
-import { Metrics } from '../Themes';
+import { Metrics, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/TabScreenStyle';
@@ -15,7 +15,7 @@ class TabScreen extends Component {
     this.showTime = this.showTime.bind(this);
   }
   componentDidMount() {
-    NativeModules.NavigationBarAndroid.hide();
+    // NativeModules.NavigationBarAndroid.hide();
     setTimeout(() => {
       this.setState({ emptyRender: false });
     }, 0.001);
@@ -84,6 +84,7 @@ class TabScreen extends Component {
                     <View
                       style={[
                         styles.card,
+                        { backgroundColor: 'white' },
                         {
                           alignItems: changeCard ? 'flex-end' : 'center',
                           height: changeCard
@@ -114,7 +115,10 @@ class TabScreen extends Component {
                         <Text
                           style={[
                             styles.degetText,
-                            { fontSize: prop.lenda[0].length >= 30 ? 10 : 12 }
+                            {
+                              fontSize: prop.lenda[0].length >= 30 ? 10 : 12,
+                              color: 'black'
+                            }
                           ]}
                         >
                           {prop.lenda}
@@ -151,6 +155,7 @@ class TabScreen extends Component {
                       <View
                         style={[
                           styles.modalTitleContainer,
+                          { backgroundColor: Colors.button },
                           changeCard
                             ? {
                                 height: '100%',
@@ -168,6 +173,39 @@ class TabScreen extends Component {
                       >
                         <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text>
                       </View>
+                      <View
+                        style={[
+                          styles.modalTitleContainer,
+                          {
+                            height: '7%',
+                            width: '3%',
+                            borderBottomLeftRadius: 5,
+                            borderTopLeftRadius: 5,
+                            borderTopRightRadius: 5,
+                            borderBottomRightRadius: 5,
+                            position: 'absolute',
+                            top: '3%',
+                            left: '3%',
+                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                            backgroundColor: Colors.actionButton
+                          },
+                          changeCard
+                            ? {
+                                height: '100%',
+                                width: '1%',
+                                borderBottomLeftRadius: 0,
+                                borderTopLeftRadius: 0,
+                                borderTopRightRadius: 5,
+                                borderBottomRightRadius: 5,
+                                position: 'absolute',
+                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                                top: 0,
+                                backgroundColor: Colors.actionButton,
+                                left: '99%'
+                              }
+                            : null
+                        ]}
+                      />
                     </View>
                   );
                 })
@@ -206,7 +244,9 @@ class TabScreen extends Component {
                         <Text
                           style={[
                             styles.degetText,
-                            { fontSize: prop.dega[0].length >= 30 ? 10 : 12 }
+                            {
+                              fontSize: prop.dega[0].length >= 30 ? 10 : 12
+                            }
                           ]}
                         >
                           {prop.dega}
@@ -216,7 +256,9 @@ class TabScreen extends Component {
                         <Text
                           style={[
                             styles.degetText,
-                            { fontSize: prop.lenda[0].length >= 30 ? 10 : 12 }
+                            {
+                              fontSize: prop.lenda[0].length >= 30 ? 10 : 12
+                            }
                           ]}
                         >
                           Lenda: {prop.lenda}
@@ -268,6 +310,39 @@ class TabScreen extends Component {
                       >
                         <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text>
                       </View>
+                      <View
+                        style={[
+                          styles.modalTitleContainer,
+                          {
+                            height: '5%',
+                            width: '3.3%',
+                            borderBottomLeftRadius: 5,
+                            borderTopLeftRadius: 5,
+                            borderTopRightRadius: 5,
+                            borderBottomRightRadius: 5,
+                            position: 'absolute',
+                            top: '2%',
+                            left: '3%',
+                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                            backgroundColor: Colors.actionButton
+                          },
+                          changeCard
+                            ? {
+                                height: '100%',
+                                width: '1%',
+                                borderBottomLeftRadius: 0,
+                                borderTopLeftRadius: 0,
+                                borderTopRightRadius: 5,
+                                borderBottomRightRadius: 5,
+                                position: 'absolute',
+                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                                top: 0,
+                                backgroundColor: Colors.actionButton,
+                                left: '99%'
+                              }
+                            : null
+                        ]}
+                      />
                     </View>
                   );
                 })}

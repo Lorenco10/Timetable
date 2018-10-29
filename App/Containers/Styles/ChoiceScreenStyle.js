@@ -31,14 +31,16 @@ export default StyleSheet.create({
     borderWidth: 1.7,
     borderRadius: (Metrics.screenHeight * 0.3) / 2,
     borderColor: 'white',
-    marginTop: Metrics.screenHeight * 0.14,
+    top: '62%',
     paddingRight: Metrics.screenHeight * 0.3 * 0.22,
     flexDirection: 'row'
   },
   logo: {
-    marginTop: Metrics.doubleSection,
-    height: Metrics.images.logo_main,
-    width: Metrics.images.logo_main,
+    position: 'absolute',
+    top: '10%',
+    alignSelf: 'center',
+    height: Metrics.screenWidth * 0.3,
+    width: Metrics.screenWidth * 0.3,
     resizeMode: 'contain'
   },
   nextButton: {
@@ -49,17 +51,17 @@ export default StyleSheet.create({
     width: Metrics.screenWidth * 0.2,
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
-    left: Metrics.screenWidth * 0.42,
-    top: Metrics.screenHeight * 0.875
+    left: '40%',
+    top: '86.3%'
   },
   toggleBox: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
     height: Metrics.screenHeight * 0.07,
-    width: Metrics.screenHeight * 0.13,
-    backgroundColor: 'rgba(255,255,255,0.0)',
-    top: Metrics.screenHeight * 0.91,
+    width: Metrics.screenWidth * 0.2,
+    backgroundColor: Colors.transparent,
+    top: '90%',
     left: '5%'
   },
   toggleContainer: {

@@ -10,22 +10,13 @@ import {
 } from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 import { FloatingAction } from 'react-native-floating-action';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import _ from 'lodash';
 import { Colors, Metrics } from '../Themes';
 import TopTabScreen from './TopTabScreen';
 
 // Styles
 import styles from './Styles/MainScreenStyle';
-
-const actions = [
-  {
-    color: Colors.actionButton,
-    icon: <Icon name="swap-vert" size={20} color="white" />,
-    name: 'bt_card',
-    position: 1
-  }
-];
 
 const TopTabScreenA = new Animated.createAnimatedComponent(TopTabScreen);
 const cardAnim = new Animated.Value(0);
@@ -69,6 +60,10 @@ class MainScreen extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.storeItem('cardH', JSON.stringify(this.state.changeCard));
+  }
+
   animate(fade) {
     Animated.timing(cardAnim, {
       toValue: fade ? 1 : 0,
@@ -96,20 +91,18 @@ class MainScreen extends Component {
   }
 
   async storeItem(key, value) {
-    const { navigation } = this.props;
     try {
       await AsyncStorage.setItem(key, value);
-      navigation.goBack();
     } catch (error) {
       //console.log(error.message);
     }
   }
 
-  async retrieveItem(key) {
+  async retrieveItem(key1) {
     try {
-      const value = await AsyncStorage.getItem(key);
+      const value = await AsyncStorage.getItem(key1);
       if (value !== null) {
-        return value;
+        return JSON.parse(value);
       }
       return null;
     } catch (error) {
@@ -142,13 +135,27 @@ class MainScreen extends Component {
   }
 
   render() {
+    const actions = [
+      {
+        color: Colors.actionButton,
+        icon: (
+          <Icon
+            name={this.state.changeCard ? 'view-grid' : 'view-stream'}
+            size={20}
+            color="white"
+          />
+        ),
+        name: 'bt_card',
+        position: 1
+      }
+    ];
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
         <StatusBar hidden />
         <TouchableOpacity
           style={[styles.backButton, { left: _.isEmpty(this.orderedCards()) ? '87%' : '82%' }]}
           onPress={() => {
-            this.storeItem('cardH', JSON.stringify(this.state.changeCard));
+            this.props.navigation.goBack();
           }}
         >
           <Icon name="close" size={18} color={_.isEmpty(this.orderedCards()) ? 'black' : 'white'} />
@@ -179,7 +186,7 @@ class MainScreen extends Component {
               }}
               actions={actions}
               color={Colors.actionButton}
-              distanceToEdge={40}
+              distanceToEdge={32}
               onPressItem={name => {
                 if (name === 'bt_card') {
                   this.floatingAction.animateButton();

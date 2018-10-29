@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
   ScrollView,
-  NativeModules,
   Animated,
   TextInput,
   Keyboard,
@@ -16,11 +15,11 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-spinkit';
+import { Transition } from 'react-navigation-fluid-transitions';
 import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
 import styles from './Styles/LaunchScreenStyles';
-import { Transform } from 'stream';
 
 class LaunchScreen extends Component {
   constructor(props) {
@@ -84,8 +83,7 @@ class LaunchScreen extends Component {
               toggle: true,
               activated: true
             },
-            () => {
-            }
+            () => {}
           );
         }
       });
@@ -123,7 +121,7 @@ class LaunchScreen extends Component {
       await AsyncStorage.removeItem(key);
       return true;
     } catch (error) {
-     // console.log(error.message);
+      // console.log(error.message);
     }
   }
 
@@ -134,7 +132,7 @@ class LaunchScreen extends Component {
         return value;
       }
     } catch (error) {
-     // console.log(error.message);
+      // console.log(error.message);
     }
   }
 
@@ -158,7 +156,8 @@ class LaunchScreen extends Component {
     Animated.timing(this.toggleAnim, {
       toValue: move ? 1 : 0,
       duration: 200,
-      easing: Easing.out(Easing.back(0.01)),
+      useNativeDriver: true,
+      easing: Easing.out(Easing.back(0.01))
     }).start();
   }
 
@@ -314,9 +313,7 @@ class LaunchScreen extends Component {
         </ScrollView>
       );
     }
-    return (
-      <ScrollView style={styles.degaBox} />
-    );
+    return <ScrollView style={styles.degaBox} />;
   }
 
   render() {
@@ -332,7 +329,7 @@ class LaunchScreen extends Component {
     });
     const translateToggle = this.toggleAnim.interpolate({
       inputRange: [0, 1],
-      outputRange: !this.state.activated ? ['60%', '-1%'] : ['-1%', '60%'],
+      outputRange: !this.state.activated ? [-30, 0] : [0, -30],
       extrapolate: 'clamp'
     });
 
@@ -340,110 +337,118 @@ class LaunchScreen extends Component {
     const { dega, paraleli, viti, toggle, email, student, pedagogu, activePicker } = this.state;
 
     return (
-      <View style={styles.mainContainer}>
+      <View style={[styles.mainContainer, { backgroundColor: '#243B55' }]}>
         <StatusBar hidden />
         <LinearGradient
           colors={[Colors.gradient1, Colors.gradient2]}
           style={styles.backgroundTheme}
         />
-        <View style={styles.centered}>
-          <Image source={Images.launch} style={styles.logo} />
-          {this.state.student ? (
-            <View style={styles.pickerContainer}>
-              <TouchableOpacity
-                style={styles.picker}
-                onPress={() => {
-                  this.setState({
-                    modalVisible: !this.state.modalVisible,
-                    activePicker: 'dega'
-                  });
-                  this.animate(!this.state.modalVisible, true);
-                }}
-              >
-                <Text style={styles.pickerText}>{this.state.dega}</Text>
-                <View style={styles.line} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.picker}
-                onPress={() => {
-                  this.setState({
-                    modalVisible: !this.state.modalVisible,
-                    activePicker: 'viti',
-                    loadContent: true
-                  });
-                  this.animate(!this.state.modalVisible, false);
-                }}
-              >
-                <Text style={styles.pickerText}>{this.state.viti}</Text>
-                <View style={styles.line} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.picker}
-                onPress={() => {
-                  this.setState({
-                    modalVisible: !this.state.modalVisible,
-                    activePicker: 'paraleli',
-                    loadContent: true
-                  });
-                  this.animate(!this.state.modalVisible, false);
-                }}
-              >
-                <Text style={styles.pickerText}>{this.state.paraleli}</Text>
-                <View style={styles.line} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.pickerContainer}>
-              <TouchableOpacity
-                style={styles.picker}
-                onPress={() => {
-                  this.setState({
-                    modalVisible: !this.state.modalVisible,
-                    activePicker: 'pedagogu'
-                  });
-                  this.animate(!this.state.modalVisible, true);
-                }}
-              >
-                <Text style={styles.pickerText}>{this.state.pedagogu}</Text>
-                <View style={styles.line} />
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            NativeModules.NavigationBarAndroid.hide();
-            navigation.goBack();
-          }}
-        >
-          <Icon name="navigate-before" size={30} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => {
-            NativeModules.NavigationBarAndroid.hide();
-            if (toggle) {
-              if (student) {
-                this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
+        <Transition shared="logo" appear="flip">
+          <Image source={Images.launch1} style={styles.logo} />
+        </Transition>
+        <Transition appear="horizontal">
+          <View style={styles.centered}>
+            {this.state.student ? (
+              <View style={styles.pickerContainer}>
+                <TouchableOpacity
+                  style={styles.picker}
+                  onPress={() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      activePicker: 'dega'
+                    });
+                    this.animate(!this.state.modalVisible, true);
+                  }}
+                >
+                  <Text style={styles.pickerText}>{this.state.dega}</Text>
+                  <View style={styles.line} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.picker}
+                  onPress={() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      activePicker: 'viti',
+                      loadContent: true
+                    });
+                    this.animate(!this.state.modalVisible, false);
+                  }}
+                >
+                  <Text style={styles.pickerText}>{this.state.viti}</Text>
+                  <View style={styles.line} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.picker}
+                  onPress={() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      activePicker: 'paraleli',
+                      loadContent: true
+                    });
+                    this.animate(!this.state.modalVisible, false);
+                  }}
+                >
+                  <Text style={styles.pickerText}>{this.state.paraleli}</Text>
+                  <View style={styles.line} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.pickerContainer}>
+                <TouchableOpacity
+                  style={styles.picker}
+                  onPress={() => {
+                    this.setState({
+                      modalVisible: !this.state.modalVisible,
+                      activePicker: 'pedagogu'
+                    });
+                    this.animate(!this.state.modalVisible, true);
+                  }}
+                >
+                  <Text style={styles.pickerText}>{this.state.pedagogu}</Text>
+                  <View style={styles.line} />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </Transition>
+        <Transition appear="horizontal">
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              //NativeModules.NavigationBarAndroid.hide();
+              navigation.goBack();
+            }}
+          >
+            <Icon name="navigate-before" size={30} color="white" />
+          </TouchableOpacity>
+        </Transition>
+        <Transition shared="next">
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={() => {
+              //NativeModules.NavigationBarAndroid.hide();
+              if (toggle) {
+                if (student) {
+                  this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
+                } else {
+                  this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
+                }
               } else {
-                this.storeItem('infoP', JSON.stringify({ pedagogu, email }));
+                this.deleteItem(student ? 'infoS' : 'infoP');
               }
-            } else {
-              this.deleteItem(student ? 'infoS' : 'infoP');
-            }
-            navigation.navigate('MainScreen', {
-              orari: this.state.orari,
-              dega: this.state.dega,
-              email: this.state.pedagogu !== 'PEDAGOGU' ? this.state.email : null,
-              pedagogu: this.state.pedagogu !== 'PEDAGOGU' ? this.state.pedagogu : null,
-              viti: this.state.viti,
-              paraleli: this.state.paraleli
-            });
-          }}
-        >
-          <Icon name="navigate-next" size={30} color="white" />
-        </TouchableOpacity>
+              navigation.navigate('MainScreen', {
+                orari: this.state.orari,
+                dega: this.state.dega,
+                email: this.state.pedagogu !== 'PEDAGOGU' ? this.state.email : null,
+                pedagogu: this.state.pedagogu !== 'PEDAGOGU' ? this.state.pedagogu : null,
+                viti: this.state.viti,
+                paraleli: this.state.paraleli
+              });
+            }}
+          >
+            <Icon name="navigate-next" size={30} color="white" />
+          </TouchableOpacity>
+        </Transition>
         {this.state.modalVisible ? (
           <Animated.View style={[styles.modalContainer, { opacity: fadeModal }]}>
             <TouchableOpacity
@@ -480,7 +485,7 @@ class LaunchScreen extends Component {
                     onChangeText={value => this.onChange(value)}
                     onSubmitEditing={() => {
                       Keyboard.dismiss();
-                      NativeModules.NavigationBarAndroid.hide();
+                      //NativeModules.NavigationBarAndroid.hide();
                     }}
                   />
                 ) : (
@@ -500,31 +505,39 @@ class LaunchScreen extends Component {
             </Animated.View>
           </Animated.View>
         ) : null}
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            setTimeout(() => {
-              this.setState({ toggle: !this.state.toggle });
-            }, 0.01);
-            this.animateToggle(this.state.activated ? this.state.toggle : !this.state.toggle);
-          }}
-          style={styles.toggleBox}
-        >
-          <View style={styles.toggleContainer}>
-            <Animated.View
-              style={[
-                styles.toggleCircle,
-                {
-                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive,
-                  marginRight: translateToggle
-                }
-              ]}
-            />
+        <Transition shared="toggle">
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              setTimeout(() => {
+                this.setState({ toggle: !this.state.toggle });
+              }, 0.01);
+              this.animateToggle(this.state.activated ? this.state.toggle : !this.state.toggle);
+            }}
+            style={styles.toggleBox}
+          >
+            <View style={styles.toggleContainer}>
+              <Transition shared="circle" delay>
+                <Animated.View
+                  style={[
+                    styles.toggleCircle,
+                    {
+                      backgroundColor: this.state.toggle
+                        ? Colors.toggleActive
+                        : Colors.togglePassive,
+                      transform: [{ translateX: translateToggle }]
+                    }
+                  ]}
+                />
+              </Transition>
+            </View>
+          </TouchableOpacity>
+        </Transition>
+        <Transition shared="text">
+          <View style={[styles.toggleBox, { top: '93.2%', left: '4.6%' }]}>
+            <Text style={styles.toggleText}>Save</Text>
           </View>
-        </TouchableOpacity>
-        <View style={[styles.toggleBox, { top: Metrics.screenHeight * 0.946, left: '4.5%' }]}>
-          <Text style={styles.toggleText}>Save</Text>
-        </View>
+        </Transition>
       </View>
     );
   }

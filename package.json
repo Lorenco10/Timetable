@@ -22,6 +22,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.4",
+    "lottie-react-native": "^2.5.9",
     "prop-types": "^15.6.1",
     "ramda": "^0.25.0",
     "react": "^16.5.0",
@@ -29,11 +30,13 @@
     "react-native-config": "^0.10.0",
     "react-native-floating-action": "^1.12.1",
     "react-native-linear-gradient": "^2.4.0",
+    "react-native-screens": "^1.0.0-alpha.15",
     "react-native-spinkit": "^1.1.1",
     "react-native-splash-screen": "^3.1.1",
     "react-native-vector-icons": "^4.6.0",
     "react-native-xml2js": "^1.0.3",
-    "react-navigation": "^2.1.0"
+    "react-navigation": "^2.1.0",
+    "react-navigation-fluid-transitions": "^0.2.72"
   },
   "devDependencies": {
     "@storybook/addon-storyshots": "^3.4.11",

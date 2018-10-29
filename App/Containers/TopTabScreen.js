@@ -31,6 +31,7 @@ export default class TopTabScreen extends Component {
           style={{ flex: 1 }}
           orari={this.orderedCards()}
           changeCard={screenProps.changeCard}
+          nightMode={screenProps.nightMode}
         />
       </View>
     );

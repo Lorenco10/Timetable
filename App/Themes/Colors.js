@@ -29,7 +29,10 @@ const colors = {
   gradient1: '#141E30',
   gradient2: '#243B55',
   toggleActive: '#F44336',
-  togglePassive: '#BDBDBD'
+  togglePassive: '#BDBDBD',
+  dark1: '#141d26',
+  dark2: '#263238',
+  dark3: '#37474F'
 };
 
 export default colors;

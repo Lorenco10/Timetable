@@ -7,10 +7,13 @@ export default StyleSheet.create({
     paddingBottom: Metrics.baseMargin
   },
   logo: {
-    marginTop: Metrics.doubleSection,
-    height: Metrics.images.logo_main,
-    width: Metrics.images.logo_main,
-    resizeMode: 'contain'
+    position: 'absolute',
+    top: '10%',
+    alignSelf: 'center',
+    height: Metrics.screenWidth * 0.3,
+    width: Metrics.screenWidth * 0.3,
+    resizeMode: 'contain',
+    transform: [{ rotate: '180deg' }]
   },
   centered: {
     alignItems: 'center'
@@ -18,7 +21,7 @@ export default StyleSheet.create({
   pickerContainer: {
     height: Metrics.screenHeight * 0.4,
     width: Metrics.screenWidth * 0.8,
-    marginTop: Metrics.screenWidth / 5,
+    marginTop: '68%',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -91,7 +94,7 @@ export default StyleSheet.create({
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
     left: Metrics.screenWidth * 0.77,
-    top: Metrics.screenHeight * 0.875
+    top: '86.3%'
   },
 
   backButton: {
@@ -145,7 +148,6 @@ export default StyleSheet.create({
     bottom: 0,
     right: 0,
     elevation: 20,
-    //transform: [{ scale: fadeModal }],
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -169,7 +171,7 @@ export default StyleSheet.create({
     height: Metrics.screenHeight * 0.07,
     width: Metrics.screenHeight * 0.13,
     backgroundColor: 'rgba(255,255,255,0.0)',
-    top: Metrics.screenHeight * 0.91,
+    top: '90%',
     left: '5%'
   },
   toggleContainer: {
