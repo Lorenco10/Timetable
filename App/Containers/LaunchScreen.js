@@ -15,6 +15,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Spinner from 'react-native-spinkit';
+import Animation from 'lottie-react-native';
 import { Images, Metrics, Colors } from '../Themes';
 
 // Styles
@@ -62,13 +63,20 @@ class LaunchScreen extends Component {
       this.retrieveItem('infoS').then(info1 => {
         if (info1 !== null) {
           const val = JSON.parse(info1);
-          this.setState({
-            dega: val.dega,
-            paraleli: val.paraleli,
-            viti: val.viti,
-            toggle: true,
-            activated: true
-          });
+          this.setState(
+            {
+              dega: val.dega,
+              paraleli: val.paraleli,
+              viti: val.viti,
+              toggle: true,
+              activated: true
+            },
+            () => {
+              setTimeout(() => {
+                this.animateToggle(true);
+              }, 300);
+            }
+          );
         }
       });
     } else {
@@ -82,7 +90,11 @@ class LaunchScreen extends Component {
               toggle: true,
               activated: true
             },
-            () => {}
+            () => {
+              setTimeout(() => {
+                this.animateToggle(true);
+              }, 300);
+            }
           );
         }
       });
@@ -153,9 +165,9 @@ class LaunchScreen extends Component {
 
   animateToggle(move) {
     Animated.timing(this.toggleAnim, {
-      toValue: move ? 1 : 0,
-      duration: 200,
-      easing: Easing.out(Easing.back(0.01))
+      toValue: move ? 0.5 : 1,
+      duration: 500,
+      easing: Easing.linear
     }).start();
   }
 
@@ -325,11 +337,6 @@ class LaunchScreen extends Component {
       outputRange: [0, 1],
       extrapolate: 'clamp'
     });
-    const translateToggle = this.toggleAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: !this.state.activated ? ['60%', '-1%'] : ['-1%', '60%'],
-      extrapolate: 'clamp'
-    });
 
     const { navigation } = this.props;
     const { dega, paraleli, viti, toggle, email, student, pedagogu, activePicker } = this.state;
@@ -408,7 +415,6 @@ class LaunchScreen extends Component {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => {
-            //NativeModules.NavigationBarAndroid.hide();
             navigation.goBack();
           }}
         >
@@ -417,7 +423,6 @@ class LaunchScreen extends Component {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
-            //NativeModules.NavigationBarAndroid.hide();
             if (toggle) {
               if (student) {
                 this.storeItem('infoS', JSON.stringify({ dega, viti, paraleli }));
@@ -475,7 +480,6 @@ class LaunchScreen extends Component {
                     onChangeText={value => this.onChange(value)}
                     onSubmitEditing={() => {
                       Keyboard.dismiss();
-                      //NativeModules.NavigationBarAndroid.hide();
                     }}
                   />
                 ) : (
@@ -501,21 +505,15 @@ class LaunchScreen extends Component {
             setTimeout(() => {
               this.setState({ toggle: !this.state.toggle });
             }, 0.01);
-            this.animateToggle(this.state.activated ? this.state.toggle : !this.state.toggle);
+            this.animateToggle(!this.state.toggle);
           }}
           style={styles.toggleBox}
         >
-          <View style={styles.toggleContainer}>
-            <Animated.View
-              style={[
-                styles.toggleCircle,
-                {
-                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive,
-                  marginRight: translateToggle
-                }
-              ]}
-            />
-          </View>
+          <Animation
+            style={{ width: Metrics.screenWidth * 0.17, height: Metrics.screenWidth * 0.17 }}
+            progress={this.toggleAnim}
+            source="anim3.json"
+          />
         </TouchableOpacity>
         <View style={[styles.toggleBox, { top: '93.2%', left: '4.6%' }]}>
           <Text style={styles.toggleText}>Save</Text>

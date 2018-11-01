@@ -16,10 +16,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import { parseString } from 'react-native-xml2js';
 import Animation from 'lottie-react-native';
-import { Images, Colors } from '../Themes';
+import { Images, Colors, Metrics } from '../Themes';
 
 // Styles
 import styles from './Styles/ChoiceScreenStyle';
+import metrics from '../Themes/Metrics';
 
 class ChoiceScreen extends Component {
   constructor(props) {
@@ -49,7 +50,6 @@ class ChoiceScreen extends Component {
   }
 
   componentDidMount() {
-    //NativeModules.NavigationBarAndroid.hide();
     SplashScreen.hide();
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
 
@@ -64,7 +64,10 @@ class ChoiceScreen extends Component {
   }
 
   handleConnectivityChange(isConnected) {
-    this.setState({ isConnected });
+    this.setState({ isConnected, showAlert: false });
+    if (isConnected) {
+      this.alertAnimation.reset();
+    }
   }
 
   async storeItem(key, value) {
@@ -184,9 +187,10 @@ class ChoiceScreen extends Component {
 
   animateToggle(move) {
     Animated.timing(this.toggleAnim, {
-      toValue: move ? 1 : 0,
-      duration: 200,
-      easing: Easing.out(Easing.back(0.01))
+      toValue: move ? 0.5 : 1,
+      duration: 500,
+      useNativeDriver: true,
+      easing: Easing.linear
     }).start();
   }
 
@@ -231,11 +235,6 @@ class ChoiceScreen extends Component {
       outputRange: [80, 0],
       extrapolate: 'clamp'
     });
-    const translateX = this.toggleAnim.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['60%', '-1%'],
-      extrapolate: 'clamp'
-    });
 
     return (
       <View style={styles.mainContainer}>
@@ -248,12 +247,28 @@ class ChoiceScreen extends Component {
             }}
             style={{
               position: 'absolute',
-              marginTop: '65%',
-              width: 200,
-              height: 200
+              marginTop: '78%',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              opacity: this.state.loading ? 1 : 0,
+              width: Metrics.screenWidth * 0.25
             }}
-            speed={!this.state.toggle ? 5 : 1}
-            source="loading_dots.json"
+            resizeMode="cover"
+            speed={this.state.toggle ? 1 : 1.6}
+            source="loading.json"
+          />
+          <Animation
+            ref={animation => {
+              this.alertAnimation = animation;
+            }}
+            loop={false}
+            style={{
+              position: 'absolute',
+              bottom: '-135%',
+              width: Metrics.screenWidth * 0.15,
+              height: Metrics.screenWidth * 0.15
+            }}
+            source="anim1.json"
           />
           <Image source={Images.launch1} style={styles.logo} />
           <TouchableOpacity
@@ -296,6 +311,11 @@ class ChoiceScreen extends Component {
         <TouchableOpacity
           style={styles.nextButton}
           onPress={() => {
+            if (this.state.toggle && !this.state.isConnected) {
+              this.alertAnimation.play();
+            } else {
+              this.alertAnimation.reset();
+            }
             if (!this.state.student) {
               this.retrieveItem('orariPedagog', 'pedagoget').then(pedagogetOrari => {
                 if (pedagogetOrari !== null && !this.state.toggle) {
@@ -353,19 +373,13 @@ class ChoiceScreen extends Component {
           }}
           style={styles.toggleBox}
         >
-          <View style={styles.toggleContainer}>
-            <Animated.View
-              style={[
-                styles.toggleCircle,
-                {
-                  marginRight: translateX,
-                  backgroundColor: this.state.toggle ? Colors.toggleActive : Colors.togglePassive
-                }
-              ]}
-            />
-          </View>
+          <Animation
+            style={{ width: Metrics.screenWidth * 0.17, height: Metrics.screenWidth * 0.17 }}
+            progress={this.toggleAnim}
+            source="anim3.json"
+          />
         </TouchableOpacity>
-        <View style={[styles.toggleBox, { top: '93.2%', left: '5.1%' }]}>
+        <View style={[styles.toggleBox, { top: '93.5%', left: '5%' }]}>
           <Text style={styles.toggleText}>Update</Text>
         </View>
       </View>

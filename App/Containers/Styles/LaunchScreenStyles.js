@@ -94,7 +94,7 @@ export default StyleSheet.create({
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
     left: Metrics.screenWidth * 0.77,
-    top: '86.3%'
+    top: '86.1%'
   },
 
   backButton: {
@@ -190,10 +190,10 @@ export default StyleSheet.create({
     elevation: 5
   },
   toggleText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Roboto',
     color: 'white',
-    letterSpacing: 2,
+    letterSpacing: 1,
     fontWeight: '300'
   }
 });

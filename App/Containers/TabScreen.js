@@ -148,14 +148,18 @@ class TabScreen extends Component {
                           {'\n'}
                           --
                         </Text>
-                        <Text style={styles.degetText}>
+                        <Text
+                          style={[
+                            styles.degetText,
+                            { fontWeight: prop.tipi[0] === 'seminar' ? 'bold' : 'normal' }
+                          ]}
+                        >
                           {prop.tipi[0][0].toUpperCase() + prop.tipi[0].substring(1)}
                         </Text>
                       </View>
                       <View
                         style={[
                           styles.modalTitleContainer,
-                          { backgroundColor: Colors.button },
                           changeCard
                             ? {
                                 height: '100%',
@@ -164,6 +168,7 @@ class TabScreen extends Component {
                                 borderTopLeftRadius: 5,
                                 borderBottomRightRadius: 0,
                                 position: 'absolute',
+                                backgroundColor: Colors.button,
                                 top: 0,
                                 right:
                                   Metrics.screenWidth * 0.88 - Metrics.screenWidth * 0.88 * 0.16
@@ -173,20 +178,20 @@ class TabScreen extends Component {
                       >
                         <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text>
                       </View>
-                      <View
+                      {/* <View
                         style={[
                           styles.modalTitleContainer,
                           {
-                            height: '5%',
-                            width: '5%',
-                            borderBottomLeftRadius: 5,
-                            borderTopLeftRadius: 5,
+                            height: '85%',
+                            width: '1.6%',
+                            borderBottomLeftRadius: 0,
+                            borderTopLeftRadius: 0,
                             borderTopRightRadius: 5,
-                            borderBottomRightRadius: 5,
+                            borderBottomRightRadius: 0,
                             position: 'absolute',
-                            top: '3%',
-                            left: '3%',
-                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                            top: 0,
+                            right: '0.26%',
+                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 0.9,
                             backgroundColor: Colors.actionButton
                           },
                           changeCard
@@ -198,14 +203,14 @@ class TabScreen extends Component {
                                 borderTopRightRadius: 5,
                                 borderBottomRightRadius: 5,
                                 position: 'absolute',
-                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 0.9,
                                 top: 0,
                                 backgroundColor: Colors.actionButton,
                                 left: '99%'
                               }
                             : null
                         ]}
-                      />
+                      /> */}
                     </View>
                   );
                 })
@@ -280,7 +285,12 @@ class TabScreen extends Component {
                           {'\n'}
                           --
                         </Text>
-                        <Text style={styles.degetText}>
+                        <Text
+                          style={[
+                            styles.degetText,
+                            { fontWeight: prop.tipi[0] === 'seminar' ? 'bold' : 'normal' }
+                          ]}
+                        >
                           {prop.tipi[0][0].toUpperCase() + prop.tipi[0].substring(1)}
                         </Text>
                       </View>
@@ -310,20 +320,20 @@ class TabScreen extends Component {
                       >
                         <Text style={styles.modalTitle}>{this.showTime(prop.ora[0])}</Text>
                       </View>
-                      <View
+                      {/* <View
                         style={[
                           styles.modalTitleContainer,
                           {
-                            height: '3%',
-                            width: '5%',
-                            borderBottomLeftRadius: 5,
-                            borderTopLeftRadius: 5,
+                            height: '88%',
+                            width: '1.6%',
+                            borderBottomLeftRadius: 0,
+                            borderTopLeftRadius: 0,
                             borderTopRightRadius: 5,
-                            borderBottomRightRadius: 5,
+                            borderBottomRightRadius: 0,
                             position: 'absolute',
-                            top: '3%',
-                            left: '3%',
-                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                            top: 0,
+                            right: '0.26%',
+                            opacity: prop.tipi[0] === 'leksion' ? 0.5 : 0.9,
                             backgroundColor: Colors.actionButton
                           },
                           changeCard
@@ -335,14 +345,14 @@ class TabScreen extends Component {
                                 borderTopRightRadius: 5,
                                 borderBottomRightRadius: 5,
                                 position: 'absolute',
-                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 1,
+                                opacity: prop.tipi[0] === 'leksion' ? 0.5 : 0.9,
                                 top: 0,
                                 backgroundColor: Colors.actionButton,
                                 left: '99%'
                               }
                             : null
                         ]}
-                      />
+                      /> */}
                     </View>
                   );
                 })}

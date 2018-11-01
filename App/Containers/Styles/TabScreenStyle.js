@@ -56,7 +56,7 @@ export default StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     letterSpacing: 2,
-    paddingRight: '3%',
-    paddingLeft: '3%'
+    paddingRight: '4%',
+    paddingLeft: '4%'
   }
 });

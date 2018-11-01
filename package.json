@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "buffer": "^5.2.1",
     "lodash": "^4.17.4",
     "lottie-react-native": "^2.5.9",
     "prop-types": "^15.6.1",
@@ -35,14 +36,9 @@
     "react-native-splash-screen": "^3.1.1",
     "react-native-vector-icons": "^4.6.0",
     "react-native-xml2js": "^1.0.3",
-    "react-navigation": "^2.1.0",
-    "react-navigation-fluid-transitions": "^0.2.72"
+    "react-navigation": "^2.1.0"
   },
   "devDependencies": {
-    "@storybook/addon-storyshots": "^3.4.11",
-    "@storybook/addons": "^3.4.11",
-    "@storybook/channels": "^3.4.11",
-    "@storybook/react-native": "^3.4.11",
     "babel-core": "6.26.0",
     "babel-jest": "22.4.3",
     "babel-plugin-ignite-ignore-reactotron": "^0.3.0",
@@ -56,10 +52,7 @@
     "jest": "22.4.3",
     "mockery": "^2.1.0",
     "react-dom": "16.3.0",
-    "react-test-renderer": "16.3.1",
-    "reactotron-react-native": "^2.1.0",
-    "reactotron-redux": "^2.1.0",
-    "reactotron-redux-saga": "^2.1.0"
+    "react-test-renderer": "16.3.1"
   },
   "jest": {
     "testMatch": [

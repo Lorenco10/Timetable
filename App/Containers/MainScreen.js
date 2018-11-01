@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  Animated,
-  Easing,
-  TouchableOpacity,
-  StatusBar,
-  AsyncStorage
-} from 'react-native';
+import { View, Text, Animated, Easing, TouchableOpacity, AsyncStorage } from 'react-native';
 import { createMaterialTopTabNavigator } from 'react-navigation';
 import { FloatingAction } from 'react-native-floating-action';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Animation from 'lottie-react-native';
 import _ from 'lodash';
 import { Colors, Metrics } from '../Themes';
 import TopTabScreen from './TopTabScreen';
@@ -60,10 +53,6 @@ class MainScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
-    this.storeItem('cardH', JSON.stringify(this.state.changeCard));
-  }
-
   animate(fade) {
     Animated.timing(cardAnim, {
       toValue: fade ? 1 : 0,
@@ -71,9 +60,14 @@ class MainScreen extends Component {
       useNativeDriver: true
     }).start(() => {
       if (!fade) {
-        this.setState({
-          changeCard: !this.state.changeCard
-        });
+        this.setState(
+          {
+            changeCard: !this.state.changeCard
+          },
+          () => {
+            this.storeItem('cardH', JSON.stringify(this.state.changeCard));
+          }
+        );
         setTimeout(() => {
           this.animate(true);
         }, 200);
@@ -151,7 +145,6 @@ class MainScreen extends Component {
     ];
     return (
       <View style={{ flex: 1, backgroundColor: '#f9f9f9' }}>
-        <StatusBar hidden />
         <TouchableOpacity
           style={[styles.backButton, { left: _.isEmpty(this.orderedCards()) ? '87%' : '82%' }]}
           onPress={() => {
@@ -162,8 +155,21 @@ class MainScreen extends Component {
         </TouchableOpacity>
         {_.isEmpty(this.orderedCards()) ? (
           <View style={styles.errorBox}>
-            <Text style={styles.notFoundText}>NOT FOUND</Text>
+            <Animation
+              ref={animation => {
+                this.animation = animation;
+              }}
+              autoPlay
+              style={{
+                width: Metrics.screenWidth * 0.5,
+                height: Metrics.screenWidth * 0.5
+              }}
+              source="empty.json"
+            />
             <View style={styles.messageBox}>
+              <Text style={[styles.messageText, { fontWeight: 'bold', fontSize: 14 }]}>
+                Not Found
+              </Text>
               <Text style={styles.messageText}>Please enter a correct configuration!</Text>
             </View>
           </View>

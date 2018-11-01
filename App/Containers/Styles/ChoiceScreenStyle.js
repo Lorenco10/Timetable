@@ -31,7 +31,7 @@ export default StyleSheet.create({
     borderWidth: 1.7,
     borderRadius: (Metrics.screenHeight * 0.3) / 2,
     borderColor: 'white',
-    top: '62%',
+    top: '65%',
     paddingRight: Metrics.screenHeight * 0.3 * 0.22,
     flexDirection: 'row'
   },
@@ -52,7 +52,7 @@ export default StyleSheet.create({
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
     left: '40%',
-    top: '86.3%'
+    top: '87.5%'
   },
   toggleBox: {
     position: 'absolute',
@@ -80,13 +80,13 @@ export default StyleSheet.create({
     elevation: 5
   },
   alertBox: {
-    height: Metrics.screenHeight * 0.07,
+    height: Metrics.screenHeight * 0.05,
     width: Metrics.screenWidth,
     alignItems: 'center',
     backgroundColor: 'white',
     justifyContent: 'center',
     position: 'absolute',
-    top: Metrics.screenHeight * 0.75
+    top: Metrics.screenHeight * 0.835
   },
   alertText: {
     fontSize: 12,
@@ -95,10 +95,10 @@ export default StyleSheet.create({
     letterSpacing: 2
   },
   toggleText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: 'Roboto',
     color: 'white',
-    letterSpacing: 2,
+    letterSpacing: 1,
     fontWeight: '300'
   }
 });
