@@ -241,17 +241,19 @@ class ChoiceScreen extends Component {
         <StatusBar translucent backgroundColor={Colors.transparent} />
         <LinearGradient colors={['#141E30', '#243B55']} style={styles.background} />
         <View style={styles.centered}>
+          <Image source={Images.launch1} style={styles.logo} />
           <Animation
             ref={animation => {
               this.animation = animation;
             }}
             style={{
               position: 'absolute',
-              marginTop: '78%',
-              justifyContent: 'flex-end',
+              justifyContent: 'center',
               alignItems: 'center',
               opacity: this.state.loading ? 1 : 0,
-              width: Metrics.screenWidth * 0.25
+              height: Metrics.screenWidth * 0.25,
+              width: Metrics.screenWidth * 0.25,
+              top: '63%'
             }}
             resizeMode="cover"
             speed={this.state.toggle ? 1 : 1.6}
@@ -264,13 +266,13 @@ class ChoiceScreen extends Component {
             loop={false}
             style={{
               position: 'absolute',
-              bottom: '-135%',
+              top: '67%',
+              alignSelf: 'center',
               width: Metrics.screenWidth * 0.15,
               height: Metrics.screenWidth * 0.15
             }}
             source="anim1.json"
           />
-          <Image source={Images.launch1} style={styles.logo} />
           <TouchableOpacity
             activeOpacity={1}
             style={styles.textContainer}

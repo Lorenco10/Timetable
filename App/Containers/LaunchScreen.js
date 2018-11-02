@@ -462,10 +462,22 @@ class LaunchScreen extends Component {
                   styles.modalTitleContainer,
                   {
                     top: activePicker === 'dega' || activePicker === 'pedagogu' ? '0%' : '88%',
-                    borderBottomRightRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    borderTopRightRadius: Metrics.screenHeight * 0.005,
-                    borderTopLeftRadius: Metrics.screenHeight * 0.005
+                    borderBottomRightRadius:
+                      activePicker === 'dega' || activePicker === 'pedagogu'
+                        ? 0
+                        : Metrics.screenHeight * 0.005,
+                    borderBottomLeftRadius:
+                      activePicker === 'dega' || activePicker === 'pedagogu'
+                        ? 0
+                        : Metrics.screenHeight * 0.005,
+                    borderTopRightRadius:
+                      activePicker === 'dega' || activePicker === 'pedagogu'
+                        ? Metrics.screenHeight * 0.005
+                        : 0,
+                    borderTopLeftRadius:
+                      activePicker === 'dega' || activePicker === 'pedagogu'
+                        ? Metrics.screenHeight * 0.005
+                        : 0
                   }
                 ]}
               >

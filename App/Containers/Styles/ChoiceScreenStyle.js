@@ -15,6 +15,7 @@ export default StyleSheet.create({
     //backgroundColor: Colors.background
   },
   centered: {
+    flex: 1,
     alignItems: 'center'
   },
   text: {
@@ -32,12 +33,13 @@ export default StyleSheet.create({
     borderRadius: (Metrics.screenHeight * 0.3) / 2,
     borderColor: 'white',
     top: '65%',
+    alignSelf: 'center',
     paddingRight: Metrics.screenHeight * 0.3 * 0.22,
     flexDirection: 'row'
   },
   logo: {
     position: 'absolute',
-    top: '30%',
+    top: '10%',
     alignSelf: 'center',
     height: Metrics.screenWidth * 0.3,
     width: Metrics.screenWidth * 0.3,
@@ -51,7 +53,7 @@ export default StyleSheet.create({
     width: Metrics.screenWidth * 0.2,
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
-    left: '40%',
+    alignSelf: 'center',
     top: '87.5%'
   },
   toggleBox: {
@@ -64,21 +66,6 @@ export default StyleSheet.create({
     top: '90%',
     left: '5%'
   },
-  toggleContainer: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    height: Metrics.screenHeight * 0.015,
-    width: Metrics.screenHeight * 0.08,
-    borderRadius: (Metrics.screenHeight * 0.015) / 2,
-    backgroundColor: 'white'
-  },
-  toggleCircle: {
-    height: Metrics.screenHeight * 0.032,
-    width: Metrics.screenHeight * 0.032,
-    marginRight: '-1%',
-    borderRadius: (Metrics.screenHeight * 0.032) / 2,
-    elevation: 5
-  },
   alertBox: {
     height: Metrics.screenHeight * 0.05,
     width: Metrics.screenWidth,
@@ -86,12 +73,12 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     position: 'absolute',
-    top: Metrics.screenHeight * 0.835
+    top: '84%'
   },
   alertText: {
     fontSize: 12,
     fontFamily: 'Roboto',
-    color: 'red',
+    color: 'black',
     letterSpacing: 2
   },
   toggleText: {

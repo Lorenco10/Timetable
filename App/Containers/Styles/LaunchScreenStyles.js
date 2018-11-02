@@ -16,12 +16,14 @@ export default StyleSheet.create({
     transform: [{ rotate: '0deg' }]
   },
   centered: {
+    flex: 1,
     alignItems: 'center'
   },
   pickerContainer: {
     height: Metrics.screenHeight * 0.4,
     width: Metrics.screenWidth * 0.8,
-    marginTop: '68%',
+    top: '42%',
+    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -93,8 +95,8 @@ export default StyleSheet.create({
     width: Metrics.screenWidth * 0.2,
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
-    left: Metrics.screenWidth * 0.77,
-    top: '86.1%'
+    left: '80%',
+    top: '87.1%'
   },
 
   backButton: {
@@ -105,8 +107,8 @@ export default StyleSheet.create({
     width: Metrics.screenWidth * 0.1,
     borderRadius: (Metrics.screenWidth * 0.2) / 2,
     backgroundColor: Colors.transparent,
-    left: Metrics.screenWidth * 0.05,
-    top: Metrics.screenHeight * 0.05
+    left: '6%',
+    top: '6%'
   },
   modal: {
     backgroundColor: 'white',
@@ -173,21 +175,6 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.0)',
     top: '90%',
     left: '5%'
-  },
-  toggleContainer: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    height: Metrics.screenHeight * 0.015,
-    width: Metrics.screenHeight * 0.08,
-    borderRadius: (Metrics.screenHeight * 0.015) / 2,
-    backgroundColor: 'white'
-  },
-  toggleCircle: {
-    height: Metrics.screenHeight * 0.032,
-    width: Metrics.screenHeight * 0.032,
-    marginRight: '-1%',
-    borderRadius: (Metrics.screenHeight * 0.032) / 2,
-    elevation: 5
   },
   toggleText: {
     fontSize: 11,
